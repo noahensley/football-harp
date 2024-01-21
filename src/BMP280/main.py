@@ -24,7 +24,7 @@ bmp280.sea_level_pressure = RELATIVE_PRESSURE_AT_SEA_LEVEL # Ironton, OH
 while True:
     print("%0.1f,%0.4f,%i" % (bmp280.temperature, bmp280.pressure / 1000, bmp280.altitude))
     
-    if bmp280.altitude >= CUTOFF_ALTITUDE
+    if bmp280.altitude >= CUTOFF_ALTITUDE:
         disable_wifi()
     else:
         enable_wifi()
