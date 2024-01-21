@@ -1,5 +1,4 @@
 import subprocess
-import time
 
 def is_wifi_enabled():
     result = subprocess.run(['sudo', 'ifconfig', 'wlan0'], capture_output=True, text=True)

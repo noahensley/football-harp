@@ -5,9 +5,8 @@ import wifi
 import time
 import board
 import subprocess
-
-# import digitalio # For use with SPI
 import adafruit_bmp280
+# import digitalio # For use with SPI
 
 TIME_DELAY = 2 # seconds
 RELATIVE_PRESSURE_AT_SEA_LEVEL = 1040 # hPa
@@ -15,7 +14,7 @@ CUTOFF_ALTITUDE = 1524 # meters
 
 # Create sensor object, communicating over the board's default I2C bus
 i2c = board.I2C()  # uses board.SCL and board.SDA
-# i2c = board.STEMMA_I2C()  # For using the built-in STEMMA QT connector on a microcontroller
+
 bmp280 = adafruit_bmp280.Adafruit_BMP280_I2C(i2c)
 
 # change this to match the location's pressure (hPa) at sea level
@@ -25,9 +24,9 @@ while True:
     print("%0.1f,%0.4f,%i" % (bmp280.temperature, bmp280.pressure / 1000, bmp280.altitude))
     
     if bmp280.altitude >= CUTOFF_ALTITUDE:
-        disable_wifi()
+        wifi.disable_wifi()
     else:
-        enable_wifi()
+        wifi.enable_wifi()
     
-    time.sleep(TIME_DELAY) # two seconds
+    time.sleep(TIME_DELAY)
 
