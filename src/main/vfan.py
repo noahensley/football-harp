@@ -1,35 +1,44 @@
-from gps import gps, WATCH_ENABLE
 import time
+import signal
+from gps import gps, WATCH_ENABLE
 
-GPS_TIMEOUT = 10  # Timeout in seconds
+class TimeoutException(Exception):
+    pass
+
+def timeout_handler(signum, frame):
+    raise TimeoutException("Timeout occurred while initializing GPS session")
 
 def read_gps():
-    # print("Entering read_gps function")
-    gps_output = "NO GPS DATA"
-    start_time = time.time()
+    gps_output = ""
 
     try:
+        # Set a timeout for connecting to the local GPSD daemon
+        signal.signal(signal.SIGALRM, timeout_handler)
+        signal.alarm(10)  # Set the timeout value (in seconds)
+
         # Connect to the local GPSD daemon
         session = gps(mode=WATCH_ENABLE)
+        signal.alarm(0)  # Cancel the timeout
 
         while True:
             report = session.next()
             if report['class'] == 'TPV':
-                if 'lat' in report and 'lon' in report and 'alt' in report:
+                if report.lat != 'n/a' and report.lon != 'n/a' and report.alt != 'n/a':
                     latitude = report.lat
                     longitude = report.lon
                     altitude = report.alt
                     # Latitude, Longitude, Altitude (m)
                     gps_output = f"{latitude},{longitude},{altitude:0.0f}"
-
-                    elapsed_time = time.time() - start_time
-                    # print(f"Elapsed Time: {elapsed_time:.2f}s, GPS Data: {gps_output}")
-
-                    if elapsed_time > GPS_TIMEOUT:
-                        break
-            
+                    return gps_output  # Return GPS data if available
+                else:
+                    raise ValueError("Latitude, longitude, or altitude is 'n/a'")
+        
+    except TimeoutException as e:
+        print(f"Timeout occurred: {e}")
+    except ValueError as e:
+        print(f"ValueError occurred: {e}")
     except Exception as e:
         print(f"An error occurred: {e}")
-        
-    # Default return statement
-    return gps_output
+    finally:
+        signal.alarm(0)  # Ensure alarm is canceled even if an exception occurs
+        return gps_output  # Return default value if unable to connect or retrieve GPS data
