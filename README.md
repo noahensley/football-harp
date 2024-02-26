@@ -8,10 +8,10 @@
 * Relies on the Python Standard Library
 * Raspberry Pi 0W (USB Power)
 * Dependencies:
-  * fswebcam
-  * gps
-  * adafruit-blinka
-  * adafruit-circuitpython-bmp280
+   * fswebcam
+   * gps
+   * adafruit-blinka
+   * adafruit-circuitpython-bmp280
 * How to run tests (still needed)
 * Use 'pip install **dependencies**' prior to running.
 
