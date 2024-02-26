@@ -1,29 +1,27 @@
 # README #
 
-This README would normally document whatever steps are necessary to get your application up and running.
-
 ### What is this repository for? ###
 
 * Football Project
-* 1.0.1
-* [Learn Markdown](https://bitbucket.org/tutorials/markdowndemo)
+* 1.0.2
 
 ### How do I get set up? ###
 
-* Summary of set up
-* Configuration
-* Dependencies
-* Database configuration
-* How to run tests
-* Deployment instructions
+* Relies on the Python Standard Library
+* Raspberry Pi 0W (USB Power)
+* Dependencies:
+ * fswebcam
+ * gps
+ * adafruit-blinka
+ * adafruit-circuitpython-bmp280
+* How to run tests (still needed)
+* Use 'pip install **dependencies**' prior to running.
 
 ### Contribution guidelines ###
 
-* Writing tests
-* Code review
-* Other guidelines
+* Writing tests (still needed)
+* Code Review (closed, needs tests)
 
 ### Who do I talk to? ###
 
 * Repo owner or admin
-* Other community or team contact
