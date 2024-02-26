@@ -9,12 +9,11 @@ from main import CUTOFF_ALTITUDE
         
 def read_sensor():
     bmp280_output = ""
-    try:
-        i2c = board.I2C()
+    
+    i2c = board.I2C()
 
-        bmp280 = adafruit_bmp280.Adafruit_BMP280_I2C(i2c)
-    except Exception as e:
-        print(f"An error occurred: {e}")
+    bmp280 = adafruit_bmp280.Adafruit_BMP280_I2C(i2c)
+
     
     # change this to match the location's pressure (hPa) at sea level
     #
@@ -22,12 +21,10 @@ def read_sensor():
     #
     # When the above lines are commented out, altitude readings seem more accurate?
     
-    try:
-        wifi.disable_wifi() if bmp280.altitude >= CUTOFF_ALTITUDE else wifi.enable_wifi()
+    
+    wifi.disable_wifi() if bmp280.altitude >= CUTOFF_ALTITUDE else wifi.enable_wifi()
         
-        bmp280_output = f"{bmp280.temperature:0.1f},{(bmp280.pressure / 1000):0.2f},{bmp280.altitude:0.0f},"
-    except Exception as e:
-        print(f"An error occured: {e}")
+    bmp280_output = f"{bmp280.temperature:0.1f},{(bmp280.pressure / 1000):0.2f},{bmp280.altitude:0.0f},"
     
     return bmp280_output
     
