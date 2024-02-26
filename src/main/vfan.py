@@ -9,7 +9,7 @@ def timeout_handler(signum, frame):
     raise TimeoutException("Timeout occurred while initializing GPS session")
 
 def read_gps():
-    gps_output = ""
+    gps_output = "NO GPS DATA"
 
     try:
         # Set a timeout for connecting to the local GPSD daemon

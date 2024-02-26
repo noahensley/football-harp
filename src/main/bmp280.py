@@ -3,10 +3,9 @@ import time
 import board
 import subprocess
 import adafruit_bmp280
+from main import CUTOFF_ALTITUDE
 
-TIME_DELAY = 2 # in seconds
 # RELATIVE_PRESSURE_AT_SEA_LEVEL = 1040 # in hPa
-CUTOFF_ALTITUDE = 1524 # in meters
         
 def read_sensor():
     bmp280_output = ""

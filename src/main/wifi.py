@@ -1,19 +1,29 @@
 import subprocess
 
 def is_wifi_enabled():
-    result = subprocess.run(['sudo', 'ifconfig', 'wlan0'], capture_output=True, text=True)
-    return 'UP' in result.stdout
+    try:
+        result = subprocess.run(['sudo', 'ifconfig', 'wlan0'], capture_output=True, text=True, check=True)
+        return 'UP' in result.stdout
+    except subprocess.CalledProcessError as e:
+        print(f"Error checking Wi-Fi status: {e}")
+        return False
 
 def enable_wifi():
-    if not is_wifi_enabled():
-        subprocess.run(['sudo', 'ifconfig', 'wlan0', 'up'])
-        print("Wi-Fi enabled")
-    else:
-        print("Wi-Fi already enabled")
+    try:
+        if not is_wifi_enabled():
+            subprocess.run(['sudo', 'ifconfig', 'wlan0', 'up'], check=True)
+            print("Wi-Fi enabled")
+        else:
+            print("Wi-Fi already enabled")
+    except subprocess.CalledProcessError as e:
+        print(f"Error enabling Wi-Fi: {e}")
 
 def disable_wifi():
-    if is_wifi_enabled():
-        subprocess.run(['sudo', 'ifconfig', 'wlan0', 'down'])
-        print("Wi-Fi disabled")
-    else:
-        print("Wi-Fi already disabled.")
+    try:
+        if is_wifi_enabled():
+            subprocess.run(['sudo', 'ifconfig', 'wlan0', 'down'], check=True)
+            print("Wi-Fi disabled")
+        else:
+            print("Wi-Fi already disabled")
+    except subprocess.CalledProcessError as e:
+        print(f"Error disabling Wi-Fi: {e}")
