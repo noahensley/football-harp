@@ -1,5 +1,3 @@
-# README #
-
 ### What is this repository for? ###
 
 * Football Project
@@ -10,17 +8,17 @@
 * Relies on the Python Standard Library
 * Raspberry Pi 0W (USB Power)
 * Dependencies:
- * fswebcam
- * gps
- * adafruit-blinka
- * adafruit-circuitpython-bmp280
+  * fswebcam
+  * gps
+  * adafruit-blinka
+  * adafruit-circuitpython-bmp280
 * How to run tests (still needed)
 * Use 'pip install **dependencies**' prior to running.
 
 ### Contribution guidelines ###
 
 * Writing tests (still needed)
-* Code Review (closed, needs tests)
+* Code review (closed, needs tests)
 
 ### Who do I talk to? ###
 
