@@ -2,7 +2,7 @@ import subprocess
 from gps import gps, WATCH_ENABLE
 
 def read_gps():
-    gps_output = "NO GPS DATA"  # Default value
+    gps_output = []  # Default value
 
     try:
         # Check if the GPS device is present
@@ -19,7 +19,9 @@ def read_gps():
                         longitude = report.lon
                         altitude = report.alt
                         # Latitude, Longitude, Altitude (m)
-                        gps_output = f"{latitude},{longitude},{altitude:0.0f}"
+                        gps_output.append(str(latitude))
+                        gps_output.append(str(longitude))
+                        gps_output.append(str(round(altitude,1)))
                         return gps_output  # Return GPS data if available
         else:
             print("GPS device not found")
