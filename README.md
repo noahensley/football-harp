@@ -11,9 +11,13 @@
 	* fswebcam
 	* gps
 	* adafruit-blinka
-	* adafruit-circuitpython-bmp280
+		* adafruit-circuitpython-bmp280
+	* direwolf
+	* aprslib
+	* sounddevice
+		* portaudio19-dev	
 * How to run tests (still needed)
-* Use 'pip install **dependencies**' prior to running.
+* Use 'pip install'/'apt-get' **dependencies** prior to running.
 
 ### Contribution guidelines ###
 
