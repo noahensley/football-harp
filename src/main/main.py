@@ -11,38 +11,52 @@ LOOP_TIME_DELAY = 10  # Delay in seconds of main loop
 # bmp280.py->wifi.py
 CUTOFF_ALTITUDE = 1524  # Altitude (in meters) where wifi is turned off
 
+# vfan.py
+GPS_DEVICE = "ttyACM0"
+
 # webcam.py
+RESOLUTION = "1920x1080"
+SKIPPED_FRAMES = 10
+CAPTURE_DELAY = 2
+CAPTURED_FRAMES = 2
 SAVE_DIRECTORY = "../../images"
 WEBCAM_DEVICES = ["video0"]  # Add more devices from USB hub
 
 # aprs.py
 CALLSIGN = "KE8ZXE"
-SSID = "-11"  # balloon
+SSID = "-11"
 SAMPLE_RATE = 44100
 
 if __name__ == "__main__":
-    ################################
-    #                              #
-    #        DIREWOLF MODE		   #
-    #                              #
-    ################################
+
+    ##################################################
+    #                                                #                  
+    #                  DIREWOLF MODE                 #
+    #                                                #
+    ##################################################
+
     if DIREWOLF_MODE:
-        telemetry = ""
+        data_list = []
+        delimiter = ","
         try:
-            telemetry += bmp280.read_sensor()
+            bmp280_data = bmp280.read_sensor()
+            for data in bmp280_data:
+                data_list.append(data)
         except Exception as e:
             print(f"Unable to read from bmp280: {e}")
 
         try:
-            gps_data = vfan.read_gps()
-            telemetry += ",".join(gps_data)
+            gps_data = vfan.read_gps(GPS_DEVICE)
+            for data in gps_data:
+                data_list.append(data)
         except Exception as e:
             print(f"Unable to read gps data: {e}")
 
-        if len(telemetry) > 0:
+        if len(data_list) > 0:
+            telemetry = delimiter.join(data_list)
             print(f"Data: {telemetry}")
             try:
-                packetAPRS = aprs.create_aprs_packet(CALLSIGN,SSID,telemetry)
+                packetAPRS = aprs.create_aprs_packet(CALLSIGN, SSID, telemetry)
                 aprs.transmit_audio(packetAPRS, SAMPLE_RATE)
             except Exception as e:
                 print(f"Unable to transmit data: {e}")
@@ -50,54 +64,63 @@ if __name__ == "__main__":
             print("Unable to collect data.\nRetrying...")
 
         try:
-            images_saved = webcam.capture_images(SAVE_DIRECTORY,WEBCAM_DEVICES)
+            images_saved = webcam.capture_images(RESOLUTION, SKIPPED_FRAMES, CAPTURE_DELAY,
+                                                  CAPTURED_FRAMES, SAVE_DIRECTORY, WEBCAM_DEVICES)
         except Exception as e:
             print(f"Unable to capture image: {e}")
 
-        #if len(gps_data) > 0:
-            #cur_lat = gps_data[0]
-            #cur_long = gps_data[1]
-            #try:
-                #aprs.update_direwolf_beacon_config(cur_lat,cur_long)
-                #aprs.restart_direwolf()
-            #except Exception as e:
-                #print(f"Unable to update beacon: {e}")
-
-    ############################
-    #                          #
-    #        DEBUG MODE		   #
-    #                          #
-    ############################
+    ##################################################
+    #                                                #                  
+    #                   DEBUG MODE                   #
+    #                                                #
+    ##################################################
+            
     elif not DIREWOLF_MODE:
         while True:
-            telemetry = ""
+            # List containing collected data
+            data_list = []
+            # Delimiter for the telemetry string
+            delimiter = ","
             print("Entering bmp280.py...")
             try:
-                telemetry += bmp280.read_sensor()
+                # Gets data from bmp280
+                bmp280_data = bmp280.read_sensor()
+                for data in bmp280_data:
+                    # Adds bmp280 data to the main list
+                    data_list.append(data)
             except Exception as e:
                 print(f"Unable to read from bmp280: {e}")
 
             print("Entering vfan.py...")
             try:
-                gps_data = vfan.read_gps()
-                telemetry += ",".join(gps_data)
+                # Gets data from gps
+                gps_data = vfan.read_gps(GPS_DEVICE)
+                for data in gps_data:
+                    # Adds gps data to the main list
+                    data_list.append(data)
             except Exception as e:
                 print(f"Unable to read gps data: {e}")
 
-            if len(telemetry) != 0:
-                print(f"Data: {telemetry}")  # Send this string to Direwolf
+            if len(data_list) > 0:
+                # Converts data list to telemetry string
+                telemetry = delimiter.join(data_list)
+                print(f"Data: {telemetry}")
             else:
                 print("Unable to collect data.\nRetrying...")
 
             print("Entering webcam.py...")
             try:
-                images_saved = webcam.capture_images(SAVE_DIRECTORY,WEBCAM_DEVICES)
+                # Captures image(s)
+                images_saved = webcam.capture_images(RESOLUTION, SKIPPED_FRAMES, CAPTURE_DELAY,
+                                                     CAPTURED_FRAMES,SAVE_DIRECTORY, WEBCAM_DEVICES)
                 for i in range(len(images_saved)):
-                    if i < len(images_saved)-1:
-                        print(f"Image saved at {images_saved[i]}")
+                    # Accounts for number of images saved at the end
+                    if type(images_saved[i]) == int:
+                        print(f"{images_saved[i]} image(s) saved.")                       
                     else:
-                        print(f"{images_saved[i]} image(s) saved.")
+                        print(f"Image saved at {images_saved[i]}")
+                        
             except Exception as e:
                 print(f"Unable to capture image: {e}")
-
+            # Waits a specified time before looping again
             time.sleep(LOOP_TIME_DELAY)
