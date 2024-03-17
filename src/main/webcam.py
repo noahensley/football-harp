@@ -6,6 +6,13 @@ from typing import List, Union
 def webcam_connected(webcam):
     """
     Checks the /dev directory for a specified webcam device path.
+
+    Parameters:
+    webcam (str): The webcam device found in the /dev folder (e.g. "video0").
+
+    Returns:
+    bool: True if the webcam device is found.
+    bool: False if the webcam device is not found.
     """
     # Get the list of devices in /dev directory
     device_list = subprocess.check_output(["ls", "/dev"]).decode("utf-8")
@@ -16,26 +23,27 @@ def webcam_connected(webcam):
     else:
         return False
 
-def capture_images(img_res, num_skip, delay, num_cap, file_path, webcam_devices) -> List[Union[str, int]]:
+def capture_images(img_res, num_skip, cap_delay, num_cap, file_path, webcam_devices) -> List[Union[str, int]]:
     """
     Uses fswebcam to save an image of specified resolution to a specified filepath.
 
     Parameters:
-    param1 (str): The desired resolution for the image in form "****x****" (e.g. "1920x1080").
-    param2 (int): The number of frames to skip before capturing.
-    param3 (int): The delay before capturing an image (in seconds).
-    param4 (int): The number of frames to capture.
-    param5 (str): The directory where the images will be saved (relative to /main).
-    param6 (list[str]): A list of webcam USB devices to iterate through (e.g. "video0").
+        img_res (str): The desired resolution for the image in form "****x****" (e.g. "1920x1080").
+        num_skip (int): The number of frames to skip before capturing.
+        cap_delay (int): The delay before capturing an image (in seconds).
+        num_cap (int): The number of frames to capture.
+        file_path (str): The directory where the images will be saved (relative to /main).
+        webcam_devices (list[str]): A list of webcam USB devices to iterate through (e.g. "video0").
 
     Returns:
-    Union[str, int]: A list of the filepaths of the capture images, and the number of saved images at the last index.
+        Union[str, int]: A list of the filepaths of the capture images, and the number of saved images.
+            The number of saved images is always the item in the last index.
     """
     # The number of images saved
     num_images_saved = 0
 
     # A list of the saved image filepaths (initially empty)
-    unique_image_paths = []
+    generated_image_paths = []
 
     # Captures an image from each webcam
     for webcam in webcam_devices:
@@ -50,12 +58,12 @@ def capture_images(img_res, num_skip, delay, num_cap, file_path, webcam_devices)
         unique_image_file_path = os.path.join(file_path, f"{formatted_datetime}.jpg")
 
         # Adds unique filepath to a list of filepaths
-        unique_image_paths.append(unique_image_file_path)
+        generated_image_paths.append(unique_image_file_path)
 
         # Constructs an fswebcam command using the the function arguments
         cmd = (
             f"fswebcam -r {img_res} -p YUYV "
-            f"-S {num_skip} -D {delay} -F {num_cap} "
+            f"-S {num_skip} -D {cap_delay} -F {num_cap} "
             f"-d /dev/{webcam} {unique_image_file_path} "
             "> /dev/null"
         )
@@ -66,7 +74,7 @@ def capture_images(img_res, num_skip, delay, num_cap, file_path, webcam_devices)
             num_images_saved += 1            
 
     # Adds success count to the end of the list to be returned
-    unique_image_paths.append(str(num_images_saved))
+    generated_image_paths.append(str(num_images_saved))
 
     # Returns list of image filepaths (and the number saved)
-    return unique_image_paths
+    return generated_image_paths

@@ -24,7 +24,7 @@ WEBCAM_DEVICES = ["video0"]  # Add more devices from USB hub
 
 # aprs.py
 CALLSIGN = "KE8ZXE"
-SSID = "-11"
+SSID = "11"
 SAMPLE_RATE = 44100
 
 if __name__ == "__main__":
@@ -37,9 +37,12 @@ if __name__ == "__main__":
 
     if DIREWOLF_MODE:
         data_list = []
+
         delimiter = ","
+
         try:
             bmp280_data = bmp280.read_sensor()
+
             for data in bmp280_data:
                 data_list.append(data)
         except Exception as e:
@@ -47,6 +50,7 @@ if __name__ == "__main__":
 
         try:
             gps_data = vfan.read_gps(GPS_DEVICE)
+            
             for data in gps_data:
                 data_list.append(data)
         except Exception as e:
@@ -54,9 +58,11 @@ if __name__ == "__main__":
 
         if len(data_list) > 0:
             telemetry = delimiter.join(data_list)
+
             print(f"Data: {telemetry}")
             try:
                 packetAPRS = aprs.create_aprs_packet(CALLSIGN, SSID, telemetry)
+                
                 aprs.transmit_audio(packetAPRS, SAMPLE_RATE)
             except Exception as e:
                 print(f"Unable to transmit data: {e}")
@@ -79,12 +85,15 @@ if __name__ == "__main__":
         while True:
             # List containing collected data
             data_list = []
+
             # Delimiter for the telemetry string
             delimiter = ","
+            
             print("Entering bmp280.py...")
             try:
                 # Gets data from bmp280
                 bmp280_data = bmp280.read_sensor()
+
                 for data in bmp280_data:
                     # Adds bmp280 data to the main list
                     data_list.append(data)
@@ -95,6 +104,7 @@ if __name__ == "__main__":
             try:
                 # Gets data from gps
                 gps_data = vfan.read_gps(GPS_DEVICE)
+
                 for data in gps_data:
                     # Adds gps data to the main list
                     data_list.append(data)
@@ -104,6 +114,7 @@ if __name__ == "__main__":
             if len(data_list) > 0:
                 # Converts data list to telemetry string
                 telemetry = delimiter.join(data_list)
+
                 print(f"Data: {telemetry}")
             else:
                 print("Unable to collect data.\nRetrying...")
@@ -118,9 +129,9 @@ if __name__ == "__main__":
                     if type(images_saved[i]) == int:
                         print(f"{images_saved[i]} image(s) saved.")                       
                     else:
-                        print(f"Image saved at {images_saved[i]}")
-                        
+                        print(f"Image saved at {images_saved[i]}")                                               
             except Exception as e:
                 print(f"Unable to capture image: {e}")
+
             # Waits a specified time before looping again
             time.sleep(LOOP_TIME_DELAY)

@@ -10,7 +10,7 @@ def read_sensor():
     Connects to a BMP280 sensor via I2C bus and reads temperature, pressure, and altitude.
 
     Returns:
-    list[float]: temperature, pressure, and altitude readings.
+        list[str]: A list of temperature, pressure, and altitude readings.
     """
     # Output initially empty
     bmp280_output_data = []   

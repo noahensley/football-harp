@@ -1,22 +1,41 @@
 import subprocess
 
 def is_wifi_enabled():
-    """Checks Raspberry Pi 0W wifi status."""
-    result = subprocess.run(['sudo', 'ifconfig', 'wlan0'], capture_output=True, text=True)
-    return 'UP' in result.stdout
+    """
+    Checks if the Wi-Fi interface (wlan0) is enabled.
+    
+    Returns:
+        bool: True if Wi-Fi is enabled, False otherwise.
+    """
+    try:
+        result = subprocess.run(['sudo', 'ifconfig', 'wlan0'], capture_output=True, text=True, check=True)
+        return 'UP' in result.stdout
+    except subprocess.CalledProcessError as e:
+        print(f"Error checking Wi-Fi status: {e}")
+        return False
 
 def enable_wifi():
-    """Enables Raspberry Pi 0W wifi via command line."""
-    if not is_wifi_enabled():
-        subprocess.run(['sudo', 'ifconfig', 'wlan0', 'up'], check=True)
-        print("Wi-Fi enabled")
-    else:
-        print("Wi-Fi already enabled")
+    """
+    Enables the Wi-Fi interface (wlan0) if it is not already enabled.
+    """
+    try:
+        if not is_wifi_enabled():
+            subprocess.run(['sudo', 'ifconfig', 'wlan0', 'up'], check=True)
+            print("Wi-Fi enabled")
+        else:
+            print("Wi-Fi already enabled")
+    except subprocess.CalledProcessError as e:
+        print(f"Error enabling Wi-Fi: {e}")
 
 def disable_wifi():
-    """Disables Raspberry Pi 0W wifi via command line."""
-    if is_wifi_enabled():
-        subprocess.run(['sudo', 'ifconfig', 'wlan0', 'down'], check=True)
-        print("Wi-Fi disabled")
-    else:
-        print("Wi-Fi already disabled")
+    """
+    Disables the Wi-Fi interface (wlan0) if it is enabled.
+    """
+    try:
+        if is_wifi_enabled():
+            subprocess.run(['sudo', 'ifconfig', 'wlan0', 'down'], check=True)
+            print("Wi-Fi disabled")
+        else:
+            print("Wi-Fi already disabled")
+    except subprocess.CalledProcessError as e:
+        print(f"Error disabling Wi-Fi: {e}")
