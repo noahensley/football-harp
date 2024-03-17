@@ -6,7 +6,7 @@
 ### How do I get set up? ###
 
 * Relies on the Python Standard Library
-* Raspberry Pi 0W (USB Power)
+* Raspberry Pi 0W
 * Dependencies:
 	* fswebcam
 	* gps
