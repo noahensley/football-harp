@@ -19,7 +19,7 @@ RESOLUTION = "1920x1080"
 SKIPPED_FRAMES = 10
 CAPTURE_DELAY = 2
 CAPTURED_FRAMES = 2
-SAVE_DIRECTORY = "../../images"
+SAVE_DIRECTORY = "../media/images"
 WEBCAM_DEVICES = ["video0"]  # Add more devices from USB hub
 
 # aprs.py
