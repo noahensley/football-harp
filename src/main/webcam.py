@@ -1,48 +1,72 @@
 import os
 import subprocess
 from datetime import datetime
+from typing import List, Union
 
-def is_webcam_connected(webcam):
-    """Checks the /dev directory for a specified
-    webcam device path."""
+def webcam_connected(webcam):
+    """
+    Checks the /dev directory for a specified webcam device path.
+    """
     # Get the list of devices in /dev directory
-    device_list = subprocess.check_output(["ls", "/dev"]).decode("utf-8")   
+    device_list = subprocess.check_output(["ls", "/dev"]).decode("utf-8")
+
     # Check if the webcam device path is present in the list of devices
     if webcam in device_list:
         return True
     else:
         return False
 
-def capture_images(resolution, num_skip, delay, num_cap, file_path, webcam_devices):
-    """Uses fswebcam to save an image of specified resolution
-    to a specified filepath."""
+def capture_images(img_res, num_skip, delay, num_cap, file_path, webcam_devices) -> List[Union[str, int]]:
+    """
+    Uses fswebcam to save an image of specified resolution to a specified filepath.
+
+    Parameters:
+    param1 (str): The desired resolution for the image in form "****x****" (e.g. "1920x1080").
+    param2 (int): The number of frames to skip before capturing.
+    param3 (int): The delay before capturing an image (in seconds).
+    param4 (int): The number of frames to capture.
+    param5 (str): The directory where the images will be saved (relative to /main).
+    param6 (list[str]): A list of webcam USB devices to iterate through (e.g. "video0").
+
+    Returns:
+    Union[str, int]: A list of the filepaths of the capture images, and the number of saved images at the last index.
+    """
     # The number of images saved
-    num_saved = 0
-    # A list of the saved image filepaths
-    unique_paths = []
+    num_images_saved = 0
+
+    # A list of the saved image filepaths (initially empty)
+    unique_image_paths = []
+
     # Captures an image from each webcam
     for webcam in webcam_devices:
         # Ensures webcam is connected
-        if not is_webcam_connected(webcam):
-            raise RuntimeError("Webcam disconnected or invalid device path.")       
+        if not webcam_connected(webcam):
+            raise RuntimeError("Webcam disconnected or invalid device path.")  
+             
         # Formats the current date/time to a string
         formatted_datetime = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+        
         # Creates a unique image filepath using the current date/time
         unique_image_file_path = os.path.join(file_path, f"{formatted_datetime}.jpg")
+
         # Adds unique filepath to a list of filepaths
-        unique_paths.append(unique_image_file_path)
+        unique_image_paths.append(unique_image_file_path)
+
         # Constructs an fswebcam command using the the function arguments
         cmd = (
-            f"fswebcam -r {resolution} -p YUYV "
+            f"fswebcam -r {img_res} -p YUYV "
             f"-S {num_skip} -D {delay} -F {num_cap} "
             f"-d /dev/{webcam} {unique_image_file_path} "
             "> /dev/null"
         )
+
         # Checks that the images were captured successfully
         if (subprocess.run(cmd, shell=True)).returncode == 0:
             # Increments the number of successful captures
-            num_saved += 1            
+            num_images_saved += 1            
+
     # Adds success count to the end of the list to be returned
-    unique_paths.append(str(num_saved))
+    unique_image_paths.append(str(num_images_saved))
+
     # Returns list of image filepaths (and the number saved)
-    return unique_paths
+    return unique_image_paths
