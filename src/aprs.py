@@ -9,7 +9,7 @@ def create_aprs_packet(callsign, ssid, telemetry, message=""):
     
     Parameters:
         callsign (str): The callsign of the control operator.
-        ssid (str): The SSID classifying the APRS transmissions (11 for balloon).
+        ssid (str): The SSID classifying the APRS transmissions (i.e. 11 = balloon).
         telemetry (str): The string containing the collected data.
         message (str, optional): An optional message to be appended to the APRS packet.
 
@@ -21,7 +21,7 @@ def create_aprs_packet(callsign, ssid, telemetry, message=""):
 
     if message:
         # Appends message to packet if supplied
-        packet += f':{message}'
+        packet += ":" + message
 
     # Returns APRS packet
     return packet
