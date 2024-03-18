@@ -13,6 +13,7 @@ def read_gps(gps_device):
     """
     # Output initially empty
     gps_output_data = []
+
     try:
         # Get the list of devices in /dev directory
         device_list = subprocess.check_output(["ls", "/dev"]).decode("utf-8")
@@ -40,10 +41,8 @@ def read_gps(gps_device):
         else:
             # GPS device was not found in the device list
             print("GPS device not found")
-
     except Exception as e:
-        print(f"An error occurred: {e}")
-        
+        print(f"An error occurred: {e}")      
     finally:
         # Return default value if unable to connect or retrieve GPS data
         return gps_output_data
