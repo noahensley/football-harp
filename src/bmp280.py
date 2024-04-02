@@ -30,8 +30,10 @@ def read_sensor():
         bmp280_output_data.append(str(round(bmp280.temperature),1))
         bmp280_output_data.append(str(round(bmp280.pressure / 1000),2))
         bmp280_output_data.append(str(round(bmp280.altitude),0))
+
     except OSError as e:
         print("Error connecting to bmp280: {e}")
+        
     except Exception as e:
         print("Unexpected error has occured: {e}")
 

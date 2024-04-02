@@ -11,8 +11,8 @@ def webcam_connected(webcam):
     webcam (str): The webcam device found in the /dev folder (e.g. "video0").
 
     Returns:
-    bool: True if the webcam device is found.
-    bool: False if the webcam device is not found.
+        bool: True if the webcam device is found.
+        bool: False if the webcam device is not found.
     """
     # Get the list of devices in /dev directory
     device_list = subprocess.check_output(["ls", "/dev"]).decode("utf-8")
@@ -37,7 +37,7 @@ def capture_images(img_res, num_skip, cap_delay, num_cap, file_path, webcam_devi
 
     Returns:
         Union[str, int]: A list of the filepaths of the capture images, and the number of saved images.
-            The number of saved images is always the item in the last index.
+        The number of saved images is always the item in the last index.
     """
     # The number of images saved
     num_images_saved = 0

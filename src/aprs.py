@@ -45,5 +45,6 @@ def transmit_audio(packet, sample_rate):
         sd.wait()
         
         print("APRS packet transmitted successfully.")
+        
     except Exception as e:
         print("Error occured during audio transmission: {e}")
