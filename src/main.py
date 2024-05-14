@@ -36,40 +36,56 @@ if __name__ == "__main__":
     ##################################################
 
     if DIREWOLF_MODE:
+        # Initializes data to an empty list
         data_list = []
 
+        # Delimiter for data string
         delimiter = ","
 
         try:
+            # Collect data from bmp280
             bmp280_data = bmp280.read_sensor()
 
             for data in bmp280_data:
+                # Add bmp280 data to data_list
                 data_list.append(data)
+
         except Exception as e:
             print(f"Unable to read from bmp280: {e}")
 
         try:
+            # Collect data from VFAN GPS
             gps_data = vfan.read_gps(GPS_DEVICE)
             
             for data in gps_data:
+                # Add VFAN GPS data to data_list
                 data_list.append(data)
+
         except Exception as e:
             print(f"Unable to read gps data: {e}")
 
         if len(data_list) > 0:
+            # Convert data_list to telemetry string
             telemetry = delimiter.join(data_list)
 
+            # Print the telemetry string
             print(f"Data: {telemetry}")
+
             try:
+                # Create an APRS packet from telemetry string
                 packetAPRS = aprs.create_aprs_packet(CALLSIGN, SSID, telemetry)
                 
+                # Transmit the APRS packet
                 aprs.transmit_audio(packetAPRS, SAMPLE_RATE)
+
             except Exception as e:
                 print(f"Unable to transmit data: {e}")
+
         else:
-            print("Unable to collect data.\nRetrying...")
+            print("Unable to collect data.")
 
         try:
+            # Capture and save image(s) using webcam
             images_saved = webcam.capture_images(RESOLUTION, SKIPPED_FRAMES, CAPTURE_DELAY,
                                                   CAPTURED_FRAMES, SAVE_DIRECTORY, WEBCAM_DEVICES)
         except Exception as e:
@@ -83,53 +99,62 @@ if __name__ == "__main__":
             
     elif not DIREWOLF_MODE:
         while True:
-            # List containing collected data
+            # Initializes data to an empty list
             data_list = []
 
-            # Delimiter for the telemetry string
+            # Delimiter for data string
             delimiter = ","
             
             print("Entering bmp280.py...")
+
             try:
-                # Gets data from bmp280
+                # Collect data from bmp280
                 bmp280_data = bmp280.read_sensor()
 
                 for data in bmp280_data:
-                    # Adds bmp280 data to the main list
+                    # Add bmp280 data to data_list
                     data_list.append(data)
+
             except Exception as e:
                 print(f"Unable to read from bmp280: {e}")
 
             print("Entering vfan.py...")
+
             try:
-                # Gets data from gps
+                # Collect data from VFAN GPS
                 gps_data = vfan.read_gps(GPS_DEVICE)
 
                 for data in gps_data:
-                    # Adds gps data to the main list
+                    # Add VFAN GPS data to data_list
                     data_list.append(data)
+
             except Exception as e:
                 print(f"Unable to read gps data: {e}")
 
             if len(data_list) > 0:
-                # Converts data list to telemetry string
+                # Convert data_list to telemetry string
                 telemetry = delimiter.join(data_list)
 
+                # Print the telemetry string
                 print(f"Data: {telemetry}")
+
             else:
                 print("Unable to collect data.\nRetrying...")
 
             print("Entering webcam.py...")
+
             try:
-                # Captures image(s)
+                # Capture and save image(s) using webcam
                 images_saved = webcam.capture_images(RESOLUTION, SKIPPED_FRAMES, CAPTURE_DELAY,
                                                      CAPTURED_FRAMES,SAVE_DIRECTORY, WEBCAM_DEVICES)
                 for i in range(len(images_saved)):
-                    # Accounts for number of images saved at the end
+                    # Print number of images/location
                     if type(images_saved[i]) == int:
-                        print(f"{images_saved[i]} image(s) saved.")                       
+                        print(f"{images_saved[i]} image(s) saved.")   
+                                            
                     else:
-                        print(f"Image saved at {images_saved[i]}")                                               
+                        print(f"Image saved at {images_saved[i]}")   
+
             except Exception as e:
                 print(f"Unable to capture image: {e}")
 
