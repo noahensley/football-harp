@@ -25,7 +25,8 @@ WEBCAM_DEVICES = ["video0"]  # Add more devices from USB hub
 # aprs.py
 CALLSIGN = "KE8ZXE"
 SSID = "11"
-SAMPLE_RATE = 44100
+BAUD_RATE = 1200
+SAMPLE_RATE = 48000
 
 if __name__ == "__main__":
 
@@ -36,47 +37,44 @@ if __name__ == "__main__":
     ##################################################
 
     if DIREWOLF_MODE:
-        # Initializes data to an empty list
-        data_list = []
-
-        # Delimiter for data string
-        delimiter = ","
+        # Initializes data to an empty dict
+        data_list = {
 
         try:
             # Collect data from bmp280
-            bmp280_data = bmp280.read_sensor()
+            bmp280_dict = bmp280.read_sensor()
 
-            for data in bmp280_data:
-                # Add bmp280 data to data_list
-                data_list.append(data)
+            # Add bmp280 data to data_list
+            data_list["BMP280"] = bmp280_dict
 
         except Exception as e:
             print(f"Unable to read from bmp280: {e}")
 
         try:
             # Collect data from VFAN GPS
-            gps_data = vfan.read_gps(GPS_DEVICE)
+            gps_dict = vfan.read_gps(GPS_DEVICE)
             
-            for data in gps_data:
-                # Add VFAN GPS data to data_list
-                data_list.append(data)
+            # Add VFAN GPS data to data_list
+            data_list["VFAN"] = gps_dict
 
         except Exception as e:
             print(f"Unable to read gps data: {e}")
 
-        if len(data_list) > 0:
-            # Convert data_list to telemetry string
-            telemetry = delimiter.join(data_list)
-
+        if len(data_list.keys()) > 0:
             # Print the telemetry string
-            print(f"Data: {telemetry}")
+            for entry in data_list:
+                for data in entry.keys():
+                    print(f"Data: {data}:{entry[data]}")
 
             try:
-                # Create an APRS packet from telemetry string
-                packetAPRS = aprs.create_aprs_packet(CALLSIGN, SSID, telemetry)
+                # Create an APRS packet from telemetry
+                packetAPRS = aprs.create_aprs_packet(CALLSIGN, SSID, data_list)
+                
+                # Generate AFSK audio for the APRS packet
+                audio_data = aprs.generate_afsk(packetAPRS, BAUD_RATE, SAMPLE_RATE)
                 
                 # Transmit the APRS packet
-                aprs.transmit_audio(packetAPRS, SAMPLE_RATE)
+                aprs.transmit_audio(audio_data, SAMPLE_RATE)
 
             except Exception as e:
                 print(f"Unable to transmit data: {e}")
