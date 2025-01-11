@@ -14,7 +14,8 @@ def read_sensor():
     """
     
     # Output initially empty
-    bmp280_output_data = []   
+    #bmp280_output_data = []
+    bmp280_output_data = {}
 
     try:
         # Create an I2C bus object
@@ -27,9 +28,14 @@ def read_sensor():
         wifi.disable_wifi() if bmp280.altitude >= CUTOFF_ALTITUDE else wifi.enable_wifi()
 
         # Adds collected bmp280 data to the return list
-        bmp280_output_data.append(str(round(bmp280.temperature,1)))
-        bmp280_output_data.append(str(round(bmp280.pressure / 1000,2)))
-        bmp280_output_data.append(str(round(bmp280.altitude,0)))
+        #bmp280_output_data.append(str(round(bmp280.temperature,1)))
+        #bmp280_output_data.append(str(round(bmp280.pressure / 1000,2)))
+        #bmp280_output_data.append(str(round(bmp280.altitude,0)))
+        
+        # Uses a dict instead
+        bmp280_output_data["Temperature"] = str(round(bmp280.temperature, 1))
+        bmp280_output_data["Pressure"] = str(round(bmp280.pressure / 1000, 2))
+        bmp280_output_data["Altitude"] = str(round(bmp280.altitude, 0))
 
     except OSError as e:
         print("Error connecting to bmp280: {e}")
