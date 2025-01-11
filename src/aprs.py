@@ -8,11 +8,22 @@ def create_aprs_packet(callsign, ssid, telemetry, message=""):
     """
     Creates an APRS packet using aprslib.
     """
+    # Extract position from telemetry
+    lat = telemetry["VFAN"]["Latitude"]
+    lon = telemetry["VFAN"]["Longitude"]
+    
+    telemetry_list = []
+    for sensor in telemetry.keys():
+        for data in telemetry[sensor].keys():
+            telemetry_list.append(telemetry[sensor][data])
+            
+    telemetry_string = ", ".join(telemetry_list)
+    
     # Combine callsign and SSID
     source = f"{callsign}-{ssid}"
     packet = aprslib.util.format_aprs_position(
-        position="4903.50N/07201.75W",  # Replace with your position
-        comment=telemetry + " " + message
+        position=f"{lat}/{lon}",  # Replace with your position
+        comment=telemetry_string + " " + message
     )
     return f"{source}>APRS::{packet}"
 
