@@ -4,6 +4,8 @@ import board
 import subprocess
 import adafruit_bmp280
 from main import CUTOFF_ALTITUDE
+
+from debug import DEBUG_MODE
         
 def read_sensor():
     """
@@ -12,9 +14,10 @@ def read_sensor():
     Returns:
         list[str]: A list of temperature, pressure, and altitude readings.
     """
-    
+    if DEBUG_MODE:
+        print("Reading BMP280...")
+        
     # Output initially empty
-    #bmp280_output_data = []
     bmp280_output_data = {}
 
     try:
@@ -28,11 +31,6 @@ def read_sensor():
         wifi.disable_wifi() if bmp280.altitude >= CUTOFF_ALTITUDE else wifi.enable_wifi()
 
         # Adds collected bmp280 data to the return list
-        #bmp280_output_data.append(str(round(bmp280.temperature,1)))
-        #bmp280_output_data.append(str(round(bmp280.pressure / 1000,2)))
-        #bmp280_output_data.append(str(round(bmp280.altitude,0)))
-        
-        # Uses a dict instead
         bmp280_output_data["Temperature"] = str(round(bmp280.temperature, 1))
         bmp280_output_data["Pressure"] = str(round(bmp280.pressure / 1000, 2))
         bmp280_output_data["Altitude"] = str(round(bmp280.altitude, 0))

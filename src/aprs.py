@@ -3,11 +3,26 @@ import sounddevice as sd
 import numpy as np
 import subprocess
 
+from debug import DEBUG_MODE
 
 def create_aprs_packet(callsign, ssid, telemetry, message=""):
     """
     Creates an APRS packet using aprslib.
+
+    Parameters:
+        callsign (str): The callsign of the station (e.g., "N0CALL").
+        ssid (str): The SSID (e.g., "11").
+        latitude (str): Latitude in the format "4903.50N".
+        longitude (str): Longitude in the format "07201.75W".
+        telemetry (str): Telemetry or additional data to include.
+        message (str, optional): Optional message.
+
+    Returns:
+        str: A formatted APRS packet string.
     """
+    if DEBUG_MODE:
+        print("Encoding APRS packet...")
+        
     # Extract position from telemetry
     lat = telemetry["VFAN"]["Latitude"]
     lon = telemetry["VFAN"]["Longitude"]
@@ -21,17 +36,21 @@ def create_aprs_packet(callsign, ssid, telemetry, message=""):
     
     # Combine callsign and SSID
     source = f"{callsign}-{ssid}"
-    packet = aprslib.util.format_aprs_position(
-        position=f"{lat}/{lon}",  # Replace with your position
-        comment=telemetry_string + " " + message
-    )
-    return f"{source}>APRS::{packet}"
+    position = f"!{lat}/{lon}"
+    comment = f"{telemetry_string} {message}".strip()
+
+    # Construct the APRS packet
+    packet = f"{source}>APRS,TCPIP*:{position} {comment}"
+    return packet
 
 
 def generate_afsk(packet, baudrate=1200, sample_rate=48000):
     """
     Generate AFSK audio for a given APRS packet.
     """
+    if DEBUG_MODE:
+        print("Generating AFSK audio from packet...")
+        
     # Map binary `1` to 1200 Hz and `0` to 2200 Hz
     tones = {'1': 1200, '0': 2200}
     
@@ -53,6 +72,9 @@ def transmit_audio(signal, sample_rate=48000):
     """
     Transmits a waveform as audio.
     """
+    if DEBUG_MODE:
+        print("Transmitting audio...")
+        
     try:
         sd.play(signal, samplerate=sample_rate)
         sd.wait()  # Wait for playback to finish

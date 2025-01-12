@@ -3,6 +3,8 @@ import subprocess
 from datetime import datetime
 from typing import List, Union
 
+from debug import DEBUG_MODE
+
 def webcam_connected(webcam):
     """
     Checks the /dev directory for a specified webcam device path.
@@ -39,6 +41,9 @@ def capture_images(img_res, num_skip, cap_delay, num_cap, file_path, webcam_devi
         Union[str, int]: A list of the filepaths of the capture images, and the number of saved images.
         The number of saved images is always the item in the last index.
     """
+    if DEBUG_MODE:
+        print("Capturing images...")
+    
     # The number of images saved
     num_images_saved = 0
 

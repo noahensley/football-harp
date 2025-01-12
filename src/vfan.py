@@ -1,6 +1,8 @@
 import subprocess
 from gps import gps, WATCH_ENABLE
 
+from debug import DEBUG_MODE
+
 def read_gps(gps_device):
     """
     Connects to a USB VFAN GPS device and reads latitude, longitude, and altitude data.
@@ -11,8 +13,10 @@ def read_gps(gps_device):
     Returns:
         list[str]: A list of latitude, longitude, and altitude readings.
     """
+    if DEBUG_MODE: 
+        print("Reading GPS...")
+        
     # Output initially empty
-    #gps_output_data = []
     gps_output_data = {}
 
     try:
@@ -32,12 +36,6 @@ def read_gps(gps_device):
                     # Ensures latitude, longitude, and altitude are valid
                     if report.lat != 'n/a' and report.lon != 'n/a' and report.alt != 'n/a':
                         # Adds data to data list
-                        #gps_output_data.append(str(report.lat))
-                        #gps_output_data.append(str(report.lon))
-                        # Rounds altitude (m) to 1 decimal place
-                        #gps_output_data.append(str(round(report.alt,1)))
-                        
-                        # Uses a dict instead
                         gps_output_data["Latitude"] = str(report.lat)
                         gps_output_data["Longitude"] = str(report.lon)
                         gps_output_data["Altitude"] = str(round(report.alt, 1))
