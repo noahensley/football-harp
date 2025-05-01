@@ -12,6 +12,7 @@ def read_gps(gps_device, max_attempts=5, timeout=3):
     Parameters:
         gps_device (str): The GPS device found in the /dev folder (e.g. "ttyACM0").
         max_attempts (int): Maximum number of attempts to read GPS data.
+        timeout (int): Max wait time for GPS data
 
     Returns:
         dict: A dictionary of latitude, longitude, and altitude readings, or empty dict if no data.
@@ -35,33 +36,33 @@ def read_gps(gps_device, max_attempts=5, timeout=3):
             # Make a limited number of attempts to get GPS data
             for attempt in range(1, max_attempts + 1):
                 if DEBUG_MODE:
-                    print(f"GPS read attempt {attempt}/{max_attempts}")
+                    print(f"GPS read attempt {attempt}/{max_attempts}")               
+
+                # Set a short timeout for this attempt
+                session.waiting(timeout)  # Wait up to 3 seconds for data
+                report = session.next()
                 
-                # Try to grab data from the GPS
-                try:
-                    # Set a short timeout for this attempt
-                    session.waiting(timeout)  # Wait up to 3 seconds for data
-                    report = session.next()
-                    
-                    if report['class'] == 'TPV':
-                        # Check if report has the required attributes
-                        if hasattr(report, 'lat') and hasattr(report, 'lon') and hasattr(report, 'alt'):
-                            # Ensures latitude, longitude, and altitude are valid
-                            if report.lat != 'n/a' and report.lon != 'n/a' and report.alt != 'n/a':
-                                # Adds data to data dictionary
-                                gps_output_data["Latitude"] = str(report.lat)
-                                gps_output_data["Longitude"] = str(report.lon)
-                                gps_output_data["Altitude"] = str(round(report.alt, 1))
-                                
-                                if DEBUG_MODE:
-                                    print("GPS data successfully read")
-                                
-                                return gps_output_data
-                
-                except (KeyError, AttributeError) as e:
-                    # Log the issue but continue to next attempt
-                    if DEBUG_MODE:
-                        print(f"GPS data read issue: {e}")
+                if report['class'] == 'TPV':
+                    # Check if report has the required attributes
+                    if hasattr(report, 'lat') and hasattr(report, 'lon') and hasattr(report, 'alt'):
+                        # Ensures latitude, longitude, and altitude are valid
+                        if report.lat != 'n/a' and report.lon != 'n/a' and report.alt != 'n/a':
+                            # Adds data to data dictionary
+                            gps_output_data["Latitude"] = str(report.lat)
+                            gps_output_data["Longitude"] = str(report.lon)
+                            gps_output_data["Altitude"] = str(round(report.alt, 1))
+                            
+                            if DEBUG_MODE:
+                                print("GPS data successfully read")
+                            
+                            return gps_output_data
+                    else:
+                        if DEBUG_MODE:
+                            print("Error: Missing required data. ",end="")
+                            if attempt == max_attempts:
+                                print("Exiting...")
+                            else:
+                                print("Retrying...")
                 
                 # Brief pause before next attempt
                 time.sleep(0.5)
@@ -80,6 +81,3 @@ def read_gps(gps_device, max_attempts=5, timeout=3):
                 session.close()
             except:
                 pass
-        
-        # Return the data (may be empty)
-        return gps_output_data
