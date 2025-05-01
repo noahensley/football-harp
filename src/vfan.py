@@ -30,7 +30,7 @@ def read_gps(gps_device, max_attempts=5, timeout=3):
 
         # Check if the GPS device path is present in the list of devices
         if gps_device in device_list:
-            # GPS device is present, establish connection
+            # GPS device (ttyACM0) is present, establish connection
             session = gps(mode=WATCH_ENABLE)
             
             # Make a limited number of attempts to get GPS data
@@ -39,10 +39,18 @@ def read_gps(gps_device, max_attempts=5, timeout=3):
                     print(f"GPS read attempt {attempt}/{max_attempts}")               
 
                 # Set a short timeout for this attempt
-                session.waiting(timeout)  # Wait up to 3 seconds for data
-                report = session.next()
+                if session.waiting(timeout):  # Wait for data (false if no data)
+                    report = session.next()
+                    print("Data received.  Checking...")
+                else:
+                    print("Timeout exceeded. ",end="")
+                    if attempt == max_attempts:
+                        print("Exiting...")
+                    else:
+                        print("Retrying...")         
+                    continue
                 
-                if report['class'] == 'TPV':
+                if hasattr(report, 'class') and report['class'] == 'TPV':
                     # Check if report has the required attributes
                     if hasattr(report, 'lat') and hasattr(report, 'lon') and hasattr(report, 'alt'):
                         # Ensures latitude, longitude, and altitude are valid
@@ -53,16 +61,18 @@ def read_gps(gps_device, max_attempts=5, timeout=3):
                             gps_output_data["Altitude"] = str(round(report.alt, 1))
                             
                             if DEBUG_MODE:
-                                print("GPS data successfully read")
+                                print("GOOD")
                             
                             return gps_output_data
+                        
                     else:
+                        # Required key was missing, error
                         if DEBUG_MODE:
-                            print("Error: Missing required data. ",end="")
-                            if attempt == max_attempts:
-                                print("Exiting...")
-                            else:
-                                print("Retrying...")
+                            print("ERROR: MISSING REQUIRED DATA")
+                else:
+                    #Likely communicating with wrong device
+                    if DEBUG_MODE:
+                        print("ERROR: DEVICE NOT TPV")
                 
                 # Brief pause before next attempt
                 time.sleep(0.5)
