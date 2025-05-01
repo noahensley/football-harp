@@ -35,11 +35,11 @@ def read_sensor():
         bmp280_output_data["Pressure"] = str(round(bmp280.pressure / 1000, 2))
         bmp280_output_data["Altitude"] = str(round(bmp280.altitude, 0))
 
-    except OSError as e:
-        print("Error connecting to bmp280: {e}")
+    except IOError as e:
+        raise IOError("Error connecting to bmp280: ", e)
         
     except Exception as e:
-        print("Unexpected error has occured: {e}")
+        raise Exception("Unexpected error occured: ", e)
 
     # Returns the list of data
     return bmp280_output_data

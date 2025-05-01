@@ -54,29 +54,33 @@ def capture_images(img_res, num_skip, cap_delay, num_cap, file_path, webcam_devi
     for webcam in webcam_devices:
         # Ensures webcam is connected
         if not webcam_connected(webcam):
-            raise RuntimeError("Webcam disconnected or invalid device path.")  
-             
-        # Formats the current date/time to a string
-        formatted_datetime = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-        
-        # Creates a unique image filepath using the current date/time
-        unique_image_file_path = os.path.join(file_path, f"{formatted_datetime}.jpg")
+            raise IOError("Webcam disconnected or invalid device path.")
 
-        # Adds unique filepath to a list of filepaths
-        generated_image_paths.append(unique_image_file_path)
+        try:  
+            # Formats the current date/time to a string
+            formatted_datetime = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+            
+            # Creates a unique image filepath using the current date/time
+            unique_image_file_path = os.path.join(file_path, f"{formatted_datetime}.jpg")
 
-        # Constructs an fswebcam command using the the function arguments
-        cmd = (
-            f"fswebcam -r {img_res} -p YUYV "
-            f"-S {num_skip} -D {cap_delay} -F {num_cap} "
-            f"-d /dev/{webcam} {unique_image_file_path} "
-            "> /dev/null"
-        )
+            # Adds unique filepath to a list of filepaths
+            generated_image_paths.append(unique_image_file_path)
 
-        # Checks that the images were captured successfully
-        if (subprocess.run(cmd, shell=True)).returncode == 0:
-            # Increments the number of successful captures
-            num_images_saved += 1            
+            # Constructs an fswebcam command using the the function arguments
+            cmd = (
+                f"fswebcam -r {img_res} -p YUYV "
+                f"-S {num_skip} -D {cap_delay} -F {num_cap} "
+                f"-d /dev/{webcam} {unique_image_file_path} "
+                "> /dev/null"
+            )
+
+            # Checks that the images were captured successfully
+            if (subprocess.run(cmd, shell=True)).returncode == 0:
+                # Increments the number of successful captures
+                num_images_saved += 1           
+
+        except Exception as e:
+            raise Exception("Unable to capture image on" + webcam + "device: ", e)
 
     # Adds success count to the end of the list to be returned
     generated_image_paths.append(str(num_images_saved))

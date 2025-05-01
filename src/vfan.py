@@ -44,10 +44,10 @@ def read_gps(gps_device):
                         return gps_output_data
         else:
             # GPS device was not found in the device list
-            print("GPS device not found")
+            raise IOError("GPS device not found")
 
     except Exception as e:
-        print(f"An error occurred: {e}")  
+        print("Unexpected error occurred: ", e)  
             
     finally:
         # Return default value if unable to connect or retrieve GPS data
