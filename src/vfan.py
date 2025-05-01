@@ -35,12 +35,12 @@ def read_gps(gps_device, max_attempts=5, timeout=3):
             # Make a limited number of attempts to get GPS data
             for attempt in range(1, max_attempts + 1):
                 if DEBUG_MODE:
-                    print(f"GPS read attempt {attempt+1}/{max_attempts}")
+                    print(f"GPS read attempt {attempt}/{max_attempts}")
                 
                 # Try to grab data from the GPS
                 try:
                     # Set a short timeout for this attempt
-                    session.waiting(3)  # Wait up to 3 seconds for data
+                    session.waiting(timeout)  # Wait up to 3 seconds for data
                     report = session.next()
                     
                     if report['class'] == 'TPV':
@@ -68,8 +68,6 @@ def read_gps(gps_device, max_attempts=5, timeout=3):
                 
         else:
             # GPS device was not found in the device list
-            if DEBUG_MODE:
-                print(f"GPS device '{gps_device}' not found in /dev")
             raise IOError(f"GPS device '{gps_device}' not found")
 
     except Exception as e:
