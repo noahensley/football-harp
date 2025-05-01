@@ -77,7 +77,9 @@ def capture_images(img_res, num_skip, cap_delay, num_cap, file_path, webcam_devi
             # Checks that the images were captured successfully
             if (subprocess.run(cmd, shell=True)).returncode == 0:
                 # Increments the number of successful captures
-                num_images_saved += 1           
+                num_images_saved += 1
+            else:
+                raise Exception("Unable to resolve fswebcam command for ", unique_image_file_path, e)
 
         except Exception as e:
             raise Exception("Unable to capture image on" + webcam + "device: ", e)
