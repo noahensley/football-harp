@@ -12,6 +12,8 @@ CUTOFF_ALTITUDE = 1524  # Altitude (in meters) where wifi is turned off
 
 # vfan.py
 GPS_DEVICE = "ttyACM0"
+GPS_MAX_ATTEMPTS = 2
+GPS_TIMEOUT = 2
 
 # webcam.py
 RESOLUTION = "1920x1080"
@@ -48,7 +50,7 @@ if __name__ == "__main__":
 
         try:
             # Collect data from VFAN GPS
-            gps_dict = vfan.read_gps(GPS_DEVICE)
+            gps_dict = vfan.read_gps(GPS_DEVICE, max_attempts=GPS_MAX_ATTEMPTS, timeout=GPS_TIMEOUT)
             
             # Add VFAN GPS data to data_list
             data_list["VFAN"] = gps_dict
