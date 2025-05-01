@@ -1,0 +1,66 @@
+## INSTALL
+
+sudo apt update
+sudo apt upgrade
+
+sudo apt install python3-pip fswebcam direwolf portaudio19-dev vim-gui-common fbi gpsd
+
+pip3 install sounddevice gps aprslib adafruit-blinka adafruit-circuitpython-bmp280
+
+sudo pip3 install gpsd-py3
+
+
+## CONFIG
+sudo raspi-config
+-- locale: en_US.UTF-8
+-- time: None UTC
+-- keyboard: Generic 105 - US
+
+vi ~/.vimrc
+-- :set nu
+-- :syntax on
+
+sudo vi  /etc/default/gpsd
+- add /dev/ttyACM0 to devices
+
+# setup python3 daemons
+sudo systemctl --force --full edit wifi_d.service
+- :r wifi_d.systemctl.config
+- :wq
+sudo systemctl --force --full edit webcam_d.service
+- :r webcam_d.systemctl.config
+- :wq
+sudo systemctl daemon-reolad
+sudo systemctl enable wifi_d.service
+sudo systemctl enable webcam_d.service
+sudo systemctl start wifi_d.service
+sudo systemctl start webcam_d.service
+
+
+
+## HANDY COMMANDS
+fbi imagefile
+v4l2-ctl --list-devices
+
+
+# see gps
+stty -F /dev/ttyACM0 speed 4800 && cat </dev/ttyACM0
+cgps -s
+https://gpsd.gitlab.io/gpsd/installation.html
+https://gpsd.gitlab.io/gpsd/gpsd-client-example-code.html
+
+
+# python daemon
+https://blog.merzlabs.com/posts/python-autostart-systemd/
+
+## loopback
+## https://superuser.com/questions/1252149/take-webcam-picture-from-shell-with-minimal-delay
+
+apt-get install raspberrypi-kernel-headers
+apt-get install v4l2loopback-dkms
+modprobe v4l2loopback
+## modprobe v4l2loopback devices=2
+ffmpeg -f video4linux2 -video_size 1920x1080 -input_format yuyv422 -i /dev/video0 -codec copy -f video4linux2 /dev/videoL0
+
+ffmpeg -f video4linux2 -video_size 1920x1080 -input_format yuyv422 -i /dev/videoL0 -frames 1 file.jpg
+ 
