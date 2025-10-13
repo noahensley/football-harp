@@ -21,7 +21,8 @@ SKIPPED_FRAMES = 10
 CAPTURE_DELAY = 2
 CAPTURED_FRAMES = 2
 SAVE_DIRECTORY = "../media/images"
-WEBCAM_DEVICES = ["video0"]  # Add more devices from USB hub
+WEBCAM_DEVICES = ["video0", "video2", "video4"]  # Each USB hub webcam takes two video* devices
+                                                 # (i.e. Camera 1 => video0/video1)
 
 # aprs.py
 CALLSIGN = "KE8ZXE"
