@@ -6,6 +6,9 @@
 # all __pycache__ folders
 __pychache__/
 
+# Temp workspace folder
+/.vscode-temp/
+
 # Node artifact files
 node_modules/
 dist/
