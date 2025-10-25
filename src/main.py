@@ -36,6 +36,7 @@ DIREWOLF_HOST = 'localhost'
 DIREWOLF_PORT = 8001 # KISS TCP port
 received_cutdown_cmd = False
 cutdown_lock = threading.Lock(False)
+"""
 th_recieve_cmd = threading.Thread(
     target=aprs_rx.receive_direwolf_packets, 
     args=(cutdown_lock, 
@@ -45,11 +46,12 @@ th_recieve_cmd = threading.Thread(
         CALLSIGN+"-"+SSID,
         True)
 )
+"""
 
 if __name__ == "__main__":
 
     while True:
-        th_recieve_cmd.start()
+        #th_recieve_cmd.start()
 
         # Initializes data to an empty dict
         data_list = {}
@@ -109,7 +111,7 @@ if __name__ == "__main__":
         except Exception as e:
             print(f"Unable to capture image: {e}")
             
-        print("====================================================================")
+        print("=" * 68)
         time.sleep(LOOP_TIME_DELAY)
     
-th_recieve_cmd.join()
+#th_recieve_cmd.join()
