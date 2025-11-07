@@ -1,5 +1,6 @@
 import socket
 import time
+import subprocess
 
 # ============================================================================
 # CONFIGURATION - Edit these values
@@ -204,6 +205,8 @@ def main():
                         command = parse_command(packet['payload'])
                         if command:
                             print(f"  >>> COMMAND DETECTED: {command} <<<")
+                            subprocess.run(['sudo', 'python3', '/../../src/blink_led.py'])
+                            #subprocess.run(['sudo', 'python3', '/../../src/cutdown.py']) Not developed yet
                         
                         print(f"  (Total packets decoded: {packets_seen})")
                         print('='*50)
