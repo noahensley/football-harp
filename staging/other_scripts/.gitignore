@@ -1,2 +1,5 @@
 #Ignore .zip files
 /*.zip
+
+#Ignore net scripts
+/net*.sh
