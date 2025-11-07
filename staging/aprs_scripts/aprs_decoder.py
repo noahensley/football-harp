@@ -1,12 +1,16 @@
 import socket
 import time
 import subprocess
+from pathlib import Path
 
 # ============================================================================
 # CONFIGURATION - Edit these values
 # ============================================================================
 FILTER_BY_CALLSIGN = False  # Set to True to filter, False to see all packets
 TARGET_CALLSIGN = 'KE8ZXE'  # Change to your payload callsign (only used if FILTER_BY_CALLSIGN = True)
+PARENT_DIR = Path(__file__).parent
+SCRIPT_PATH = PARENT_DIR / "../../src/blink_led.py"
+SCRIPT_ABS_PATH = SCRIPT_PATH.resolve() #Not sure if necessary
 # ============================================================================
 
 def decode_ax25_address(data, offset):
@@ -205,9 +209,9 @@ def main():
                         command = parse_command(packet['payload'])
                         if command:
                             print(f"  >>> COMMAND DETECTED: {command} <<<")
-                            subprocess.run(['sudo', 'python3', '/../../src/blink_led.py'])
+                            subprocess.run(['sudo', 'python3', str(SCRIPT_ABS_PATH)])
                         if command == "CUTDOWN":
-                            #subprocess.run(['sudo', 'python3', '/../../src/cutdown.py']) Not developed yet
+                            #subprocess.run(['sudo', 'python3', str(SCRIPT_ABS_PATH)]) Not developed yet
                             pass
                         
                         print(f"  (Total packets decoded: {packets_seen})")
