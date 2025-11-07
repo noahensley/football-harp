@@ -57,5 +57,5 @@ def blink_led(times=10, duration=0.1):
 
 if __name__ == "__main__":
     # Blink 10 times, 0.1 seconds per blink (fast succession)
-    blink_led(times=10, duration=0.1)
-    print("LED blink complete!")
+    blink_led()
+    #print("LED blink complete!")
