@@ -206,7 +206,9 @@ def main():
                         if command:
                             print(f"  >>> COMMAND DETECTED: {command} <<<")
                             subprocess.run(['sudo', 'python3', '/../../src/blink_led.py'])
+                        if command == "CUTDOWN":
                             #subprocess.run(['sudo', 'python3', '/../../src/cutdown.py']) Not developed yet
+                            pass
                         
                         print(f"  (Total packets decoded: {packets_seen})")
                         print('='*50)
