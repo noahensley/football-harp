@@ -1,3 +1,9 @@
+#!/usr/bin/env python3
+"""
+LED Blink Script for Raspberry Pi Zero W
+Blinks the onboard ACT LED in fast succession for notification
+"""
+
 import time
 import os
 
@@ -17,6 +23,9 @@ def blink_led(times=10, duration=0.1):
         # Save original trigger setting
         with open(led_trigger, 'r') as f:
             original_trigger = f.read().strip()
+            # Extract the active trigger (between brackets)
+            if '[' in original_trigger:
+                original_trigger = original_trigger.split('[')[1].split(']')[0]
         
         # Set LED to manual control
         with open(led_trigger, 'w') as f:
