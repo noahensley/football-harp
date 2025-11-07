@@ -1,2 +1,2 @@
-#Ignore .zip directories
-*.zip
+#Ignore .zip files
+/*.zip
