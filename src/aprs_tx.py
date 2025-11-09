@@ -1,97 +1,263 @@
-#TODO:
-#Integrate aprslib
-#Configure PTT
-
-import aprslib
-import sounddevice as sd
-import numpy as np
-import subprocess
+#!/usr/bin/env python3
+# TODO:
+# Currently only using VOX to key transmitter
+# Configure Pi direwolf with a GPIO
+# Ground Baofeng UV-5R PTT line using GPIO + Transistor
+import socket
+import time
+import struct
+#from pathlib import Path - Use if telemetry is also logged
 
 from debug import DEBUG_MODE
 
+
 def create_aprs_packet(callsign, ssid, telemetry, message=""):
     """
-    Creates an APRS packet using aprslib.
-
-    Parameters:
-        callsign (str): The callsign of the station (e.g., "N0CALL").
-        ssid (str): The SSID (e.g., "11").
-        latitude (str): Latitude in the format "4903.50N".
-        longitude (str): Longitude in the format "07201.75W".
-        telemetry (str): Telemetry or additional data to include.
-        message (str, optional): Optional message.
-
+    Creates an APRS packet string for transmission.
+    
+    Args:
+        callsign: Station callsign (e.g., "N0CALL")
+        ssid: SSID (e.g., "11")
+        telemetry: Dictionary containing sensor data including lat/lon
+        message: Optional message text
+        
     Returns:
-        str: A formatted APRS packet string.
+        str: APRS packet in TNC2 format
     """
     if DEBUG_MODE:
-        print("Encoding APRS packet...")
-        
+        print("Creating APRS packet...")
+    
     try:
         # Extract position from telemetry
         lat = telemetry["VFAN"]["Latitude"]
         lon = telemetry["VFAN"]["Longitude"]
         
+        # Build telemetry string
         telemetry_list = []
         for sensor in telemetry.keys():
             for data in telemetry[sensor].keys():
-                telemetry_list.append(telemetry[sensor][data])
-                
+                if data not in ["Latitude", "Longitude"]:  # Skip position data
+                    telemetry_list.append(f"{data}={telemetry[sensor][data]}")
+        
         telemetry_string = ", ".join(telemetry_list)
         
-        # Combine callsign and SSID
+        # Construct APRS packet in TNC2 format
         source = f"{callsign}-{ssid}"
-        position = f"!{lat}/{lon}"
-        comment = f"{telemetry_string} {message}".strip()
-
-        # Construct the APRS packet
-        packet = f"{source}>APRS,TCPIP*:{position} {comment}"
+        # Position report with timestamp and comment
+        packet = f"{source}>APRS,WIDE1-1:!{lat}/{lon}>{telemetry_string} {message}".strip()
+        
+        if DEBUG_MODE:
+            print(f"Packet: {packet}")
+        
         return packet
-
+        
     except Exception as e:
-        raise Exception("Unable to create APRS packet: ", e)
+        raise Exception(f"Unable to create APRS packet: {e}")
 
 
-def generate_afsk(packet, baudrate=1200, sample_rate=48000):
+def encode_kiss_frame(packet):
     """
-    Generate AFSK audio for a given APRS packet.
-    """
-    if DEBUG_MODE:
-        print("Generating AFSK audio from packet...")
-        
-    try:
-        # Map binary `1` to 1200 Hz and `0` to 2200 Hz
-        tones = {'1': 1200, '0': 2200}
-        
-        # NRZI encode the packet into a bitstream (implement NRZI logic here)
-        bitstream = ''.join(format(ord(c), '08b') for c in packet)  # Example bitstream generation
-        
-        # Generate the audio signal
-        signal = np.array([])
-        for bit in bitstream:
-            freq = tones[bit]
-            t = np.arange(0, 1 / baudrate, 1 / sample_rate)
-            sine_wave = np.sin(2 * np.pi * freq * t)
-            signal = np.concatenate((signal, sine_wave))
-
-        return signal
-
-    except Exception as e:
-        raise Exception("Unable to generate AFSK audio: ", e)
-
+    Encode an APRS packet into a KISS frame for transmission.
     
-def transmit_audio(signal, sample_rate=48000):
+    Args:
+        packet: APRS packet string in TNC2 format
+        
+    Returns:
+        bytes: KISS-encoded frame
     """
-    Transmits a waveform as audio.
+    FEND = 0xC0  # Frame End
+    FESC = 0xDB  # Frame Escape
+    TFEND = 0xDC  # Transposed Frame End
+    TFESC = 0xDD  # Transposed Frame Escape
+    
+    # Command byte: 0x00 = data frame on port 0
+    frame = bytearray([FEND, 0x00])
+    
+    # Add the packet data (direwolf will parse TNC2 format)
+    data = packet.encode('ascii')
+    
+    # Escape special characters
+    for byte in data:
+        if byte == FEND:
+            frame.extend([FESC, TFEND])
+        elif byte == FESC:
+            frame.extend([FESC, TFESC])
+        else:
+            frame.append(byte)
+    
+    # End frame
+    frame.append(FEND)
+    
+    return bytes(frame)
+
+
+def transmit_via_direwolf_kiss(packet, kiss_host='localhost', kiss_port=8001):
+    """
+    Transmit APRS packet via existing direwolf service using KISS protocol.
+    
+    Args:
+        packet: APRS packet string in TNC2 format
+        kiss_host: Direwolf KISS server hostname
+        kiss_port: Direwolf KISS TCP port (default 8001)
     """
     if DEBUG_MODE:
-        print("Transmitting audio...")
-        
+        print(f"Connecting to direwolf KISS interface at {kiss_host}:{kiss_port}...")
+    
+    sock = None
     try:
-        sd.play(signal, samplerate=sample_rate)
-        sd.wait()  # Wait for playback to finish
-        print("APRS packet transmitted successfully.")
-
+        # Connect to direwolf KISS interface
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.settimeout(5)
+        sock.connect((kiss_host, kiss_port))
+        
+        if DEBUG_MODE:
+            print("Connected to direwolf")
+        
+        # Encode and send packet
+        kiss_frame = encode_kiss_frame(packet)
+        sock.sendall(kiss_frame)
+        
+        if DEBUG_MODE:
+            print(f"Sent {len(kiss_frame)} bytes to direwolf")
+        
+        # Wait for transmission to complete
+        # Direwolf will handle the actual transmission timing and PTT
+        time.sleep(1.0)  # Adjust based on typical packet length
+        
+        if DEBUG_MODE:
+            print("Transmission complete")
+        
+    except ConnectionRefusedError:
+        raise Exception(
+            f"Cannot connect to direwolf on {kiss_host}:{kiss_port}. "
+            "Ensure direwolf service is running and KISS is enabled in config."
+        )
+    except socket.timeout:
+        raise Exception("Connection to direwolf timed out")
     except Exception as e:
-        raise Exception("Error occurred during audio transmission: ", e)
+        raise Exception(f"Transmission error: {e}")
+    finally:
+        if sock:
+            sock.close()
 
+
+def transmit_via_direwolf_agw(packet, agw_host='localhost', agw_port=8000):
+    """
+    Transmit APRS packet via existing direwolf service using AGW protocol.
+    Alternative to KISS, may be easier for some applications.
+    
+    Args:
+        packet: APRS packet string in TNC2 format
+        agw_host: Direwolf AGW server hostname
+        agw_port: Direwolf AGW TCP port (default 8000)
+    """
+    if DEBUG_MODE:
+        print(f"Connecting to direwolf AGW interface at {agw_host}:{agw_port}...")
+    
+    sock = None
+    try:
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.settimeout(5)
+        sock.connect((agw_host, agw_port))
+        
+        if DEBUG_MODE:
+            print("Connected to direwolf AGW")
+        
+        # AGW 'K' frame = send unproto (UI) frame
+        # This is a simplified implementation
+        parts = packet.split(':', 1)
+        if len(parts) != 2:
+            raise ValueError("Invalid packet format")
+        
+        header = parts[0]
+        info = parts[1]
+        
+        # Send raw packet (direwolf AGW accepts TNC2 format)
+        # Frame format: 'K' command with radio port 0
+        agw_frame = bytearray()
+        agw_frame.extend(b'K')  # Unproto frame type
+        agw_frame.extend(struct.pack('<I', 0))  # Port number
+        agw_frame.extend(packet.encode('ascii'))
+        
+        sock.sendall(agw_frame)
+        
+        time.sleep(1.0)
+        
+        if DEBUG_MODE:
+            print("Transmission complete")
+        
+    except ConnectionRefusedError:
+        raise Exception(
+            f"Cannot connect to direwolf on {agw_host}:{agw_port}. "
+            "Ensure direwolf service is running and AGWPE is enabled in config."
+        )
+    except Exception as e:
+        raise Exception(f"Transmission error: {e}")
+    finally:
+        if sock:
+            sock.close()
+
+
+def transmit_aprs(callsign, ssid, telemetry, message="",
+                  interface='kiss',  # 'kiss' or 'agw'
+                  kiss_host='localhost', kiss_port=8001,
+                  agw_host='localhost', agw_port=8000):
+    """
+    Complete APRS transmission workflow via running direwolf service.
+    
+    Note: PTT is handled by direwolf configuration. Ensure direwolf.conf
+    has PTT configured (e.g., "PTT GPIO 17") or use VOX on your radio.
+    
+    Args:
+        callsign: Station callsign
+        ssid: SSID
+        telemetry: Telemetry dictionary
+        message: Optional message
+        interface: 'kiss' or 'agw' (KISS recommended)
+        kiss_host/kiss_port: KISS interface settings
+        agw_host/agw_port: AGW interface settings
+    """
+    try:
+        # Create packet
+        packet = create_aprs_packet(callsign, ssid, telemetry, message)
+        
+        # Transmit via selected interface
+        # Direwolf handles PTT based on its configuration
+        if interface == 'kiss':
+            transmit_via_direwolf_kiss(packet, kiss_host, kiss_port)
+        elif interface == 'agw':
+            transmit_via_direwolf_agw(packet, agw_host, agw_port)
+        else:
+            raise ValueError(f"Invalid interface: {interface}")
+        
+        print("✓ APRS packet transmitted successfully via direwolf")
+        
+    except Exception as e:
+        print(f"✗ Transmission failed: {e}")
+        raise
+
+
+# Test
+if __name__ == "__main__":
+    # Example telemetry data (format should not matter, it's byte-encoded)
+    test_telemetry = {
+        "VFAN": {
+            "Latitude": "4903.50N",
+            "Longitude": "07201.75W",
+            "Altitude": "123m"
+        },
+        "Sensors": {
+            "Temp": "25C",
+            "Battery": "12.6V"
+        }
+    }
+    
+    # Transmit using existing direwolf service
+    # PTT is handled by direwolf config or VOX on the radio
+    transmit_aprs(
+        callsign="N0CALL",
+        ssid="11",
+        telemetry=test_telemetry,
+        message="Test beacon",
+        interface='kiss'
+    )
