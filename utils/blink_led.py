@@ -1,11 +1,5 @@
 #!/usr/bin/env python3
-"""
-LED Blink Script for Raspberry Pi Zero W
-Blinks the onboard ACT LED in fast succession for notification
-"""
-
 import time
-import os
 
 # Function to control the ACT LED
 def blink_led(times=10, duration=0.1):
@@ -56,6 +50,5 @@ def blink_led(times=10, duration=0.1):
         exit(1)
 
 if __name__ == "__main__":
-    # Blink 10 times, 0.1 seconds per blink (fast succession)
     blink_led()
     #print("LED blink complete!")

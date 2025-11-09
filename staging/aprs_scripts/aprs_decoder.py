@@ -7,11 +7,15 @@ from pathlib import Path
 # CONFIGURATION - Edit these values
 # ============================================================================
 FILTER_BY_CALLSIGN = False  # Set to True to filter, False to see all packets
-TARGET_CALLSIGN = 'KE8ZXE'  # Change to your payload callsign (only used if FILTER_BY_CALLSIGN = True)
-PARENT_DIR = Path(__file__).parent
-SCRIPT_PATH = PARENT_DIR / "../../src/blink_led.py"
-SCRIPT_ABS_PATH = SCRIPT_PATH.resolve() #Not sure if necessary
+TARGET_CALLSIGN = "KE8ZXE"  # Change to payload callsign (only used if FILTER_BY_CALLSIGN = True)
+COMMAND_LIST = ["N8SSU:CMD:CUTDOWN"] #Can be expanded
 # ============================================================================
+PARENT_DIR = Path(__file__).parent
+LED_SCRIPT_PATH = PARENT_DIR / "../../utils/blink_led.py"
+CUTDOWN_SCRIPT_PATH = PARENT_DIR / "../../utils/cutdown.py"
+LED_SCRIPT_ABS_PATH = LED_SCRIPT_PATH.resolve() #Not sure if necessary
+CUTDOWN_SCRIPT_ABS_PATH = CUTDOWN_SCRIPT_PATH.resolve() #Not sure if necessary
+
 
 def decode_ax25_address(data, offset):
     """
@@ -37,6 +41,7 @@ def decode_ax25_address(data, offset):
         full_callsign = callsign
     
     return full_callsign, offset + 7, is_last
+
 
 def parse_ax25_packet(ax25_data, target_callsign=None):
     """
@@ -77,8 +82,8 @@ def parse_ax25_packet(ax25_data, target_callsign=None):
             # Some packets might not have these, just extract what we have
             info = ax25_data[offset:].decode('ascii', errors='ignore').strip()
         else:
-            control = ax25_data[offset]
-            pid = ax25_data[offset + 1]
+            control = ax25_data[offset] #Unused
+            pid = ax25_data[offset + 1] #Unused
             info_start = offset + 2
             
             # Extract information field
@@ -94,6 +99,7 @@ def parse_ax25_packet(ax25_data, target_callsign=None):
     except Exception as e:
         print(f"Parse error: {e}")
         return None
+    
 
 def parse_command(payload):
     """
@@ -102,14 +108,13 @@ def parse_command(payload):
     if not payload:
         return None
     
-    commands = ['CUTDOWN', 'VALVE_OPEN', 'VALVE_CLOSE', 'STATUS', 'RESET']
-    
     payload_upper = payload.upper()
-    for cmd in commands:
+    for cmd in COMMAND_LIST:
         if cmd in payload_upper:
             return cmd
     
     return None
+
 
 def main():
     # Configuration
@@ -207,11 +212,10 @@ def main():
                         
                         # Check for command
                         command = parse_command(packet['payload'])
-                        if command:
-                            print(f"  >>> COMMAND DETECTED: {command} <<<")
-                            subprocess.run(['sudo', 'python3', str(SCRIPT_ABS_PATH)])
                         if command == "CUTDOWN":
-                            #subprocess.run(['sudo', 'python3', str(SCRIPT_ABS_PATH)]) Not developed yet
+                            print(f"  >>> COMMAND DETECTED: {command} <<<")
+                            subprocess.run(['sudo', 'python3', str(LED_SCRIPT_ABS_PATH)])
+                            subprocess.run(['sudo', 'python3', str(CUTDOWN_SCRIPT_ABS_PATH)]) #Not developed yet
                             pass
                         
                         print(f"  (Total packets decoded: {packets_seen})")
@@ -248,6 +252,7 @@ def main():
             except:
                 pass
             time.sleep(5)
+
 
 if __name__ == '__main__':
     main()
