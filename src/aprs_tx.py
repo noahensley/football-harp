@@ -1,3 +1,7 @@
+#TODO:
+#Integrate aprslib
+#Configure PTT
+
 import aprslib
 import sounddevice as sd
 import numpy as np
