@@ -1,3 +1,7 @@
+# TODO:
+# Move/integrate to /src
+# Alter Pi service to reflect new script location
+
 import socket
 import time
 import subprocess
@@ -8,7 +12,7 @@ from pathlib import Path
 # ============================================================================
 FILTER_BY_CALLSIGN = False  # Set to True to filter, False to see all packets
 TARGET_CALLSIGN = "KE8ZXE"  # Change to payload callsign (only used if FILTER_BY_CALLSIGN = True)
-COMMAND_LIST = ["N8SSU:CMD:CUTDOWN"] #Can be expanded
+COMMAND_LIST = ["N8SSU:CMD:CUTDOWN"] # Can be expanded
 # ============================================================================
 PARENT_DIR = Path(__file__).parent
 LED_SCRIPT_PATH = PARENT_DIR / "../../utils/blink_led.py"
@@ -27,7 +31,7 @@ def decode_ax25_address(data, offset):
     
     # Extract callsign (6 bytes, shifted right by 1)
     callsign_bytes = data[offset:offset+6]
-    callsign = ''.join([chr(b >> 1) for b in callsign_bytes]).strip()
+    callsign = "".join([chr(b >> 1) for b in callsign_bytes]).strip()
     
     # Extract SSID from 7th byte
     ssid_byte = data[offset+6]
@@ -80,20 +84,20 @@ def parse_ax25_packet(ax25_data, target_callsign=None):
         # Control and PID fields
         if offset + 2 > len(ax25_data):
             # Some packets might not have these, just extract what we have
-            info = ax25_data[offset:].decode('ascii', errors='ignore').strip()
+            info = ax25_data[offset:].decode("ascii", errors="ignore").strip()
         else:
             control = ax25_data[offset] #Unused
             pid = ax25_data[offset + 1] #Unused
             info_start = offset + 2
             
             # Extract information field
-            info = ax25_data[info_start:].decode('ascii', errors='ignore').strip()
+            info = ax25_data[info_start:].decode("ascii", errors="ignore").strip()
         
         return {
-            'destination': dest,
-            'source': source,
-            'path': path,
-            'payload': info
+            "destination": dest,
+            "source": source,
+            "path": path,
+            "payload": info
         }
     
     except Exception as e:
@@ -118,7 +122,7 @@ def parse_command(payload):
 
 def main():
     # Configuration
-    DIREWOLF_HOST = 'localhost'
+    DIREWOLF_HOST = "localhost"
     DIREWOLF_PORT = 8001  # KISS TCP port
     
     print("APRS Packet Decoder - KISS Protocol Mode")
@@ -202,24 +206,24 @@ def main():
                     
                     if packet:
                         packets_filtered += 1
-                        print(f"\n{'='*50}")
-                        print(f"[Packet #{packets_filtered}] Received at {time.strftime('%H:%M:%S')}")
-                        print(f"  From: {packet['source']}")
-                        print(f"  To: {packet['destination']}")
-                        if packet['path']:
-                            print(f"  Path: {' -> '.join(packet['path'])}")
-                        print(f"  Payload: {packet['payload']}")
+                        print(f"\n{"="*50}")
+                        print(f"[Packet #{packets_filtered}] Received at {time.strftime("%H:%M:%S")}")
+                        print(f"  From: {packet["source"]}")
+                        print(f"  To: {packet["destination"]}")
+                        if packet["path"]:
+                            print(f"  Path: {" -> ".join(packet["path"])}")
+                        print(f"  Payload: {packet["payload"]}")
                         
                         # Check for command
-                        command = parse_command(packet['payload'])
+                        command = parse_command(packet["payload"])
                         if command == "CUTDOWN":
                             print(f"  >>> COMMAND DETECTED: {command} <<<")
-                            subprocess.run(['sudo', 'python3', str(LED_SCRIPT_ABS_PATH)])
-                            subprocess.run(['sudo', 'python3', str(CUTDOWN_SCRIPT_ABS_PATH)]) #Not developed yet
+                            subprocess.run(["sudo", "python3", str(LED_SCRIPT_ABS_PATH)])
+                            subprocess.run(["sudo", "python3", str(CUTDOWN_SCRIPT_ABS_PATH)]) #Not developed yet
                             pass
                         
                         print(f"  (Total packets decoded: {packets_seen})")
-                        print('='*50)
+                        print("="*50)
             
         except ConnectionRefusedError:
             print(f"✗ Could not connect to Direwolf at {DIREWOLF_HOST}:{DIREWOLF_PORT}")
@@ -228,14 +232,14 @@ def main():
             time.sleep(5)
         
         except KeyboardInterrupt:
-            print(f"\n\n{'='*50}")
+            print(f"\n\n{"="*50}")
             print("Shutting down...")
             print(f"Total packets decoded: {packets_seen}")
             if FILTER_BY_CALLSIGN:
                 print(f"Packets for {TARGET_CALLSIGN}: {packets_filtered}")
             else:
                 print(f"Packets displayed: {packets_filtered}")
-            print('='*50)
+            print("="*50)
             try:
                 sock.close()
             except:
@@ -254,5 +258,5 @@ def main():
             time.sleep(5)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

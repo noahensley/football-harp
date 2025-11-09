@@ -15,30 +15,30 @@ def blink_led(times=10, duration=0.1):
     
     try:
         # Save original trigger setting
-        with open(led_trigger, 'r') as f:
+        with open(led_trigger, "r") as f:
             original_trigger = f.read().strip()
             # Extract the active trigger (between brackets)
-            if '[' in original_trigger:
-                original_trigger = original_trigger.split('[')[1].split(']')[0]
+            if "[" in original_trigger:
+                original_trigger = original_trigger.split("[")[1].split("]")[0]
         
         # Set LED to manual control
-        with open(led_trigger, 'w') as f:
-            f.write('none')
+        with open(led_trigger, "w") as f:
+            f.write("none")
         
         # Blink the LED
         for _ in range(times):
             # LED on
-            with open(led_brightness, 'w') as f:
-                f.write('1')
+            with open(led_brightness, "w") as f:
+                f.write("1")
             time.sleep(duration)
             
             # LED off
-            with open(led_brightness, 'w') as f:
-                f.write('0')
+            with open(led_brightness, "w") as f:
+                f.write("0")
             time.sleep(duration)
         
         # Restore original trigger
-        with open(led_trigger, 'w') as f:
+        with open(led_trigger, "w") as f:
             f.write(original_trigger)
             
     except PermissionError:
