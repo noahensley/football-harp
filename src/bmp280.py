@@ -14,8 +14,7 @@ def read_sensor():
     Returns:
         list[str]: A list of temperature, pressure, and altitude readings.
     """
-    if DEBUG_MODE:
-        print("Reading BMP280...")
+    print("[BMP280] Reading data...", end="")
         
     # Output initially empty
     bmp280_output_data = {}
@@ -36,12 +35,14 @@ def read_sensor():
         bmp280_output_data["Altitude"] = str(round(bmp280.altitude, 0))
 
     except IOError as e:
-        raise IOError("Error connecting to bmp280: ", e)
+        raise IOError(e)
         
     except Exception as e:
-        raise Exception("Unexpected error occured: ", e)
+        raise Exception(e)
 
     # Returns the list of data
+    if DEBUG_MODE:
+        print("DONE")
     return bmp280_output_data
     
 

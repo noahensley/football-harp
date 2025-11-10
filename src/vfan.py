@@ -18,8 +18,7 @@ def read_gps(gps_device, max_attempts=5, timeout=3):
         dict: A dictionary of latitude, longitude, and altitude readings, or empty dict if no data.
     """
     
-    if DEBUG_MODE: 
-        print("Reading GPS...")
+    print("[VFAN] Reading...", end="")
         
     # Output initially empty
     gps_output_data = {}
@@ -36,18 +35,20 @@ def read_gps(gps_device, max_attempts=5, timeout=3):
             # Make a limited number of attempts to get GPS data
             for attempt in range(1, max_attempts + 1):
                 if DEBUG_MODE:
-                    print(f"GPS read attempt {attempt}/{max_attempts}")               
-
+                    print(f"[VFAN] Read attempt {attempt}/{max_attempts}")               
+		    
                 # Set a short timeout for this attempt
                 if session.waiting(timeout):  # Wait for data (false if no data)
                     report = session.next()
-                    print("Data received.  Checking...")
+                    if DEBUG_MODE:
+                        print("[VFAN] Data received.  Checking...")
                 else:
-                    print("Timeout exceeded. ",end="")
-                    if attempt == max_attempts:
-                        print("Exiting...")
-                    else:
-                        print("Retrying...")         
+                    if DEBUG_MODE:
+                        print("[VFAN] Timeout exceeded. ", end="")
+                        if attempt == max_attempts:
+                            print("Exiting...")
+                        else:
+                            print("Retrying...")         
                     continue
                 
                 if hasattr(report, 'class') and report['class'] == 'TPV':
@@ -60,19 +61,18 @@ def read_gps(gps_device, max_attempts=5, timeout=3):
                             gps_output_data["Longitude"] = str(report.lon)
                             gps_output_data["Altitude"] = str(round(report.alt, 1))
                             
-                            if DEBUG_MODE:
-                                print("GOOD")
+                            print("DONE")
                             
                             return gps_output_data
                         
                     else:
                         # Required key was missing, error
                         if DEBUG_MODE:
-                            print("ERROR: MISSING REQUIRED DATA")
+                            print("[VFAN] ERROR: MISSING REQUIRED DATA")
                 else:
                     #Likely communicating with wrong device
                     if DEBUG_MODE:
-                        print("ERROR: DEVICE NOT TPV")
+                        print("[VFAN] ERROR: DEVICE NOT TPV")
                 
                 # Brief pause before next attempt
                 time.sleep(0.5)
@@ -82,7 +82,7 @@ def read_gps(gps_device, max_attempts=5, timeout=3):
             raise IOError(f"GPS device '{gps_device}' not found")
 
     except Exception as e:
-        raise Exception("Unexpected error occurred: ", e)
+        raise Exception(e)
             
     finally:
         # Close the session if it was opened

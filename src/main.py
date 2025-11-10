@@ -47,10 +47,10 @@ if __name__ == "__main__":
             data_list["BMP280"] = bmp280_dict
 
         except IOError as e:
-            print("Unable to connect to bmp280: ", e)
+            print("ERROR:", e)
 
         except Exception as e:
-            print("Unable to read from bmp280: ", e)
+            print("ERROR:", e)
 
         try:
             # Collect data from VFAN GPS
@@ -60,16 +60,17 @@ if __name__ == "__main__":
             data_list["VFAN"] = gps_dict
 
         except IOError as e:
-            print("Unable to connect to VFAN GPS: ", e)
+            print("ERROR:", e)
 
         except Exception as e:
-            print("Unable to read gps data: ", e)
+            print("ERROR:", e)
 
         if len(data_list.keys()) > 0:
             # Print the telemetry string
-            for sensor in data_list:
-                for data in data_list[sensor].keys():
-                    print(f"Data: {data}:{data_list[sensor][data]}")
+            if DEBUG_MODE:
+                for sensor in data_list:
+                    for data in data_list[sensor].keys():
+                        print(f"Data: {data}:{data_list[sensor][data]}")
 
             try:
                 # Create an APRS packet from telemetry
@@ -82,19 +83,17 @@ if __name__ == "__main__":
                 aprs_tx.transmit_audio(audio_data, SAMPLE_RATE)
 
             except Exception as e:
-                print("Unable to transmit APRS data: ", e)
+                print("ERROR:", e)
 
         else:
-            print("No data to transmit.")
+            print("ERROR: No data to transmit.")
 
         try:
             # Capture and save image(s) using webcam
             images_saved = webcam.capture_images(RESOLUTION, SKIPPED_FRAMES, CAPTURE_DELAY,
                                                   CAPTURED_FRAMES, SAVE_DIRECTORY, WEBCAM_DEVICES)
         except Exception as e:
-            print(f"Unable to capture image: {e}")
+            print("ERROR:", e)
             
         print("=" * 68)
         time.sleep(LOOP_TIME_DELAY)
-    
-#th_recieve_cmd.join()
