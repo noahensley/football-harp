@@ -66,28 +66,24 @@ if __name__ == "__main__":
         except Exception as e:
             print("ERROR:", e)
 
-        if len(data_list.keys()) > 0:
-            # Print the telemetry string
-            if DEBUG_MODE:
-                for sensor in data_list:
-                    for data in data_list[sensor].keys():
-                        print(f"Data: {data}:{data_list[sensor][data]}")
+        # Print the telemetry string
+        if DEBUG_MODE:
+            for sensor in data_list:
+                for data in data_list[sensor].keys():
+                    print(f"Data: {data}:{data_list[sensor][data]}")
 
-            try:
-                # Create an APRS packet from telemetry
-                packetAPRS = aprs_tx.create_aprs_packet(CALLSIGN, SSID, data_list)
-                
-                # Generate AFSK audio for the APRS packet
-                audio_data = aprs_tx.generate_afsk(packetAPRS, BAUD_RATE, SAMPLE_RATE)
-                
-                # Transmit the APRS packet
-                aprs_tx.transmit_audio(audio_data, SAMPLE_RATE)
+        try:
+            # Create an APRS packet from telemetry
+            packetAPRS = aprs_tx.create_aprs_packet(CALLSIGN, SSID, data_list)
+            
+            # Generate AFSK audio for the APRS packet
+            audio_data = aprs_tx.generate_afsk(packetAPRS, BAUD_RATE, SAMPLE_RATE)
+            
+            # Transmit the APRS packet
+            aprs_tx.transmit_audio(audio_data, SAMPLE_RATE)
 
-            except Exception as e:
-                print("ERROR:", e)
-
-        else:
-            print("ERROR: No data to transmit.")
+        except Exception as e:
+            print("ERROR:", e)
 
         try:
             # Capture and save image(s) using webcam
