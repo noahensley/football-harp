@@ -41,7 +41,7 @@ def capture_images(img_res, num_skip, cap_delay, num_cap, file_path, webcam_devi
         Union[str, int]: A list of the filepaths of the capture images, and the number of saved images.
         The number of saved images is always the item in the last index.
     """
-    print(f"[WEBCAM] Capturing {num_cap} images...", end="")
+    print(f"[WEBCAM] Capturing {len(webcam_devices)} images...", end="")
     
     # The number of images saved
     num_images_saved = 0

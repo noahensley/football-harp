@@ -35,16 +35,16 @@ def read_gps(gps_device, max_attempts=5, timeout=3):
             # Make a limited number of attempts to get GPS data
             for attempt in range(1, max_attempts + 1):
                 if DEBUG_MODE:
-                    print(f"[VFAN] Read attempt {attempt}/{max_attempts}")               
+                    print(f"\n[VFAN] Read attempt {attempt}/{max_attempts}", end="")               
 		    
                 # Set a short timeout for this attempt
                 if session.waiting(timeout):  # Wait for data (false if no data)
                     report = session.next()
                     if DEBUG_MODE:
-                        print("[VFAN] Data received.  Checking...")
+                        print("\n[VFAN] Data received.  Checking...", end="")
                 else:
                     if DEBUG_MODE:
-                        print("[VFAN] Timeout exceeded. ", end="")
+                        print("\n[VFAN] Timeout exceeded. ", end="")
                         if attempt == max_attempts:
                             print("Exiting...")
                         else:
@@ -67,22 +67,20 @@ def read_gps(gps_device, max_attempts=5, timeout=3):
                         
                     else:
                         # Required key was missing, error
-                        if DEBUG_MODE:
-                            print("[VFAN] ERROR: MISSING REQUIRED DATA")
+                        raise ValueError("Required key was missing")
                 else:
                     #Likely communicating with wrong device
-                    if DEBUG_MODE:
-                        print("[VFAN] ERROR: DEVICE NOT TPV")
+                    raise ValueError("Device class not TPV")
                 
                 # Brief pause before next attempt
                 time.sleep(0.5)
                 
         else:
             # GPS device was not found in the device list
-            raise IOError(f"GPS device '{gps_device}' not found")
+            raise IOError(f"GPS device {gps_device} not found")
 
     except Exception as e:
-        raise Exception(e)
+        raise
             
     finally:
         # Close the session if it was opened

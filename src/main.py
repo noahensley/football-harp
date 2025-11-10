@@ -14,7 +14,7 @@ LOOP_TIME_DELAY = 10  # Delay in seconds of main loop
 CUTOFF_ALTITUDE = 1524  # Altitude (in meters) where wifi is turned off
 
 # vfan.py
-GPS_DEVICE = "ttyACM0"
+GPS_DEVICE = "ttyS0"
 GPS_MAX_ATTEMPTS = 2
 GPS_TIMEOUT = 2
 
