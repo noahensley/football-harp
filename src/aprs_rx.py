@@ -15,10 +15,10 @@ TARGET_CALLSIGN = "KE8ZXE"  # Change to payload callsign (only used if FILTER_BY
 COMMAND_LIST = ["N8SSU:CMD:CUTDOWN"] # Can be expanded
 # ============================================================================
 PARENT_DIR = Path(__file__).parent
-LED_SCRIPT_PATH = PARENT_DIR / "../../utils/blink_led.py"
-CUTDOWN_SCRIPT_PATH = PARENT_DIR / "../../utils/cutdown.py"
-LED_SCRIPT_ABS_PATH = LED_SCRIPT_PATH.resolve() #Not sure if necessary
-CUTDOWN_SCRIPT_ABS_PATH = CUTDOWN_SCRIPT_PATH.resolve() #Not sure if necessary
+LED_SCRIPT_PATH = PARENT_DIR / "../utils/blink_led.py"
+CUTDOWN_SCRIPT_PATH = PARENT_DIR / "../utils/cutdown.py"
+LED_SCRIPT_ABS_PATH = LED_SCRIPT_PATH.resolve() # Not sure if necessary
+CUTDOWN_SCRIPT_ABS_PATH = CUTDOWN_SCRIPT_PATH.resolve() # Not sure if necessary
 
 
 def decode_ax25_address(data, offset):
@@ -206,8 +206,8 @@ def main():
                     
                     if packet:
                         packets_filtered += 1
-                        print(f"\n{"="*50}")
-                        print(f"[Packet #{packets_filtered}] Received at {time.strftime("%H:%M:%S")}")
+                        print("\n" + ("=" * 50))
+                        print(f"[Packet #{packets_filtered}] Received at {time.strftime('%H:%M:%S')}")
                         print(f"  From: {packet["source"]}")
                         print(f"  To: {packet["destination"]}")
                         if packet["path"]:
@@ -232,7 +232,7 @@ def main():
             time.sleep(5)
         
         except KeyboardInterrupt:
-            print(f"\n\n{"="*50}")
+            print("\n\n" + ("=" * 50))
             print("Shutting down...")
             print(f"Total packets decoded: {packets_seen}")
             if FILTER_BY_CALLSIGN:
