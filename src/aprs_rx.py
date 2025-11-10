@@ -223,7 +223,7 @@ def main():
                             pass
                         
                         print(f"  (Total packets decoded: {packets_seen})")
-                        print("="*50)
+                        print("=" * 50)
             
         except ConnectionRefusedError:
             print(f"✗ Could not connect to Direwolf at {DIREWOLF_HOST}:{DIREWOLF_PORT}")
