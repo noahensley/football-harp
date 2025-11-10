@@ -208,11 +208,11 @@ def main():
                         packets_filtered += 1
                         print("\n" + ("=" * 50))
                         print(f"[Packet #{packets_filtered}] Received at {time.strftime('%H:%M:%S')}")
-                        print(f"  From: {packet["source"]}")
-                        print(f"  To: {packet["destination"]}")
+                        print(f"  From: {packet['source']}")
+                        print(f"  To: {packet['destination']}")
                         if packet["path"]:
-                            print(f"  Path: {" -> ".join(packet["path"])}")
-                        print(f"  Payload: {packet["payload"]}")
+                            print(f"  Path: {' -> '.join(packet['path'])}")
+                        print(f"  Payload: {packet['payload']}")
                         
                         # Check for command
                         command = parse_command(packet["payload"])
