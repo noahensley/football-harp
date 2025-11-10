@@ -24,8 +24,7 @@ def create_aprs_packet(callsign, ssid, telemetry, message=""):
     Returns:
         str: APRS packet in TNC2 format
     """
-    if DEBUG_MODE:
-        print("Creating APRS packet...")
+    print("[APRS_Tx] Creating APRS packet...", end="")
     
     try:
         # Extract position from telemetry
@@ -47,12 +46,12 @@ def create_aprs_packet(callsign, ssid, telemetry, message=""):
         packet = f"{source}>APRS,WIDE1-1:!{lat}/{lon}>{telemetry_string} {message}".strip()
         
         if DEBUG_MODE:
-            print(f"Packet: {packet}")
+            print(f"\n\tPacket: {packet}")
         
         return packet
         
     except Exception as e:
-        raise Exception(f"Unable to create APRS packet: {e}")
+        raise Exception("Unable to create APRS packet", e)
 
 
 def encode_kiss_frame(packet):
@@ -101,7 +100,7 @@ def transmit_via_direwolf_kiss(packet, kiss_host='localhost', kiss_port=8001):
         kiss_port: Direwolf KISS TCP port (default 8001)
     """
     if DEBUG_MODE:
-        print(f"Connecting to direwolf KISS interface at {kiss_host}:{kiss_port}...")
+        print(f"[APRS_Tx] Connecting to direwolf KISS interface at {kiss_host}:{kiss_port}...", end="")
     
     sock = None
     try:
@@ -111,21 +110,23 @@ def transmit_via_direwolf_kiss(packet, kiss_host='localhost', kiss_port=8001):
         sock.connect((kiss_host, kiss_port))
         
         if DEBUG_MODE:
-            print("Connected to direwolf")
+            print("[APRS_Tx] DONE")
         
         # Encode and send packet
         kiss_frame = encode_kiss_frame(packet)
+        if DEBUG_MODE:
+            print("[APRS_Tx] Sending...", end="")
         sock.sendall(kiss_frame)
         
         if DEBUG_MODE:
-            print(f"Sent {len(kiss_frame)} bytes to direwolf")
+            print(f"DONE.\n\tSent {len(kiss_frame)} bytes to direwolf")
         
         # Wait for transmission to complete
         # Direwolf will handle the actual transmission timing and PTT
         time.sleep(1.0)  # Adjust based on typical packet length
         
         if DEBUG_MODE:
-            print("Transmission complete")
+            print("[APRS_Tx] Transmission complete")
         
     except ConnectionRefusedError:
         raise Exception(
@@ -135,7 +136,7 @@ def transmit_via_direwolf_kiss(packet, kiss_host='localhost', kiss_port=8001):
     except socket.timeout:
         raise Exception("Connection to direwolf timed out")
     except Exception as e:
-        raise Exception(f"Transmission error: {e}")
+        raise Exception("Transmission error:", e)
     finally:
         if sock:
             sock.close()
@@ -152,7 +153,7 @@ def transmit_via_direwolf_agw(packet, agw_host='localhost', agw_port=8000):
         agw_port: Direwolf AGW TCP port (default 8000)
     """
     if DEBUG_MODE:
-        print(f"Connecting to direwolf AGW interface at {agw_host}:{agw_port}...")
+        print(f"Connecting to direwolf AGW interface at {agw_host}:{agw_port}...", end="")
     
     sock = None
     try:
@@ -161,7 +162,7 @@ def transmit_via_direwolf_agw(packet, agw_host='localhost', agw_port=8000):
         sock.connect((agw_host, agw_port))
         
         if DEBUG_MODE:
-            print("Connected to direwolf AGW")
+            print("DONE")
         
         # AGW 'K' frame = send unproto (UI) frame
         # This is a simplified implementation
@@ -184,7 +185,7 @@ def transmit_via_direwolf_agw(packet, agw_host='localhost', agw_port=8000):
         time.sleep(1.0)
         
         if DEBUG_MODE:
-            print("Transmission complete")
+            print("[APRS_Tx] Transmission complete")
         
     except ConnectionRefusedError:
         raise Exception(
@@ -192,7 +193,7 @@ def transmit_via_direwolf_agw(packet, agw_host='localhost', agw_port=8000):
             "Ensure direwolf service is running and AGWPE is enabled in config."
         )
     except Exception as e:
-        raise Exception(f"Transmission error: {e}")
+        raise Exception("Transmission error:", e)
     finally:
         if sock:
             sock.close()
@@ -219,10 +220,12 @@ def transmit_aprs(callsign, ssid, telemetry, message="",
     """
     try:
         # Create packet
+        print("[APRS_Tx] Creating APRS packet...", end="")
         packet = create_aprs_packet(callsign, ssid, telemetry, message)
-        
+        print("DONE")
         # Transmit via selected interface
         # Direwolf handles PTT based on its configuration
+        print("[APRS_Txt] Transmitting...", end="")
         if interface == 'kiss':
             transmit_via_direwolf_kiss(packet, kiss_host, kiss_port)
         elif interface == 'agw':
@@ -230,11 +233,10 @@ def transmit_aprs(callsign, ssid, telemetry, message="",
         else:
             raise ValueError(f"Invalid interface: {interface}")
         
-        print("✓ APRS packet transmitted successfully via direwolf")
+        print("DONE")
         
     except Exception as e:
-        print(f"✗ Transmission failed: {e}")
-        raise
+        raise Exception(e)
 
 
 # Test
