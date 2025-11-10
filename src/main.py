@@ -48,10 +48,10 @@ if __name__ == "__main__":
             data_list["BMP280"] = bmp280_dict
 
         except IOError as e:
-            print("ERROR:", e)
+            print("ERROR:", "Missing BMP280 device.")
 
         except Exception as e:
-            print("ERROR:", e)
+            print("ERROR:", "Error reading from BMP280 device.")
 
         try:
             # Collect data from VFAN GPS

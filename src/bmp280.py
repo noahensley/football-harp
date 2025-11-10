@@ -35,10 +35,10 @@ def read_sensor():
         bmp280_output_data["Altitude"] = str(round(bmp280.altitude, 0))
 
     except IOError as e:
-        raise IOError(e)
+        raise
         
     except Exception as e:
-        raise Exception(e)
+        raise
 
     # Returns the list of data
     if DEBUG_MODE:
