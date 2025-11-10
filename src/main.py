@@ -4,6 +4,9 @@ import time
 import webcam
 import aprs_tx
 
+# debug.py
+from debug import DEBUG_MODE
+
 # main.py
 LOOP_TIME_DELAY = 10  # Delay in seconds of main loop
 
@@ -34,8 +37,6 @@ SAMPLE_RATE = 48000
 if __name__ == "__main__":
 
     while True:
-        #th_recieve_cmd.start()
-
         # Initializes data to an empty dict
         data_list = {}
 
