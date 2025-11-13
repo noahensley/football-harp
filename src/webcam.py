@@ -5,6 +5,9 @@ from typing import List, Union
 
 from debug import DEBUG_MODE
 
+# from pathlib import Path
+# Make a default image save location
+
 def webcam_connected(webcam):
     """
     Checks the /dev directory for a specified webcam device path.

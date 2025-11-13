@@ -3,6 +3,11 @@ import vfan
 import time
 import webcam
 import aprs_tx
+import telem
+
+# Move these macros to config.py (currently debug.py)
+# Import macros
+# Import utils.log_telemetry_data (refactor)
 
 # debug.py
 from debug import DEBUG_MODE
@@ -84,6 +89,15 @@ if __name__ == "__main__":
 
         except Exception as e:
             print("ERROR:", e)
+	
+	# UNTESTED (START)
+        try:
+            packetAPRS = "KE8ZXE-11::KE8ZXE-11:VFAN:123:BMP280:12,32" #dummy data
+            telem.log_data(data=packetAPRS)
+
+        except Exception as e:
+            print("ERROR:", e)
+	# UNTESTED (END)
 
         try:
             # Capture and save image(s) using webcam
