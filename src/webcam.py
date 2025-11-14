@@ -5,7 +5,9 @@ from typing import List, Union
 
 from debug import DEBUG_MODE
 
-# from pathlib import Path
+from pathlib import Path
+ROOT_DIR = Path(__file__).parent.parent
+IMAGE_DIR = ROOT_DIR / "data/images/"
 # Make a default image save location
 
 def webcam_connected(webcam):
@@ -28,7 +30,7 @@ def webcam_connected(webcam):
     else:
         return False
 
-def capture_images(img_res, num_skip, cap_delay, num_cap, file_path, webcam_devices) -> List[Union[str, int]]:
+def capture_images(img_res, num_skip, cap_delay, num_cap, webcam_devices, file_path=IMAGE_DIR) -> List[Union[str, int]]:
     """
     Uses fswebcam to save an image of specified resolution to a specified filepath.
 
