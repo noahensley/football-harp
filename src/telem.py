@@ -4,6 +4,7 @@ import os
 ROOT_DIR = Path(__file__).parent.parent
 TELEM_DIR = ROOT_DIR / "./data"
 LOG_FNAME = TELEM_DIR / "data.txt"
+LOG_FNAME = LOG_FNAME.resolve()
 
 def log_data(data, file=LOG_FNAME):
     try:
