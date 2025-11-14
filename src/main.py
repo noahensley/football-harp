@@ -28,7 +28,7 @@ RESOLUTION = "1920x1080"
 SKIPPED_FRAMES = 10
 CAPTURE_DELAY = 2
 CAPTURED_FRAMES = 2
-SAVE_DIRECTORY = "../media/images"
+#SAVE_DIRECTORY = "../media/images"
 WEBCAM_DEVICES = ["video0", "video2", "video4"]  # Each USB hub webcam takes two video* devices
                                                  # (i.e. Camera 1 => video0/video1)
 
@@ -43,7 +43,8 @@ if __name__ == "__main__":
 
     while True:
         # Initializes data to an empty dict
-        data_list = {}
+        # dummy data
+        data_list = {"VFAN": {"Latitude": 10.18, "Longitude": 789.2}}
 
         try:
             # Collect data from bmp280
@@ -79,30 +80,26 @@ if __name__ == "__main__":
 
         try:
             # Create an APRS packet from telemetry
-            packetAPRS = aprs_tx.create_aprs_packet(CALLSIGN, SSID, data_list)
-            
-            # Generate AFSK audio for the APRS packet
-            audio_data = aprs_tx.generate_afsk(packetAPRS, BAUD_RATE, SAMPLE_RATE)
+            packetAPRS = aprs_tx.create_aprs_packet(CALLSIGN, SSID, data_list, message="TEST BEACON")
             
             # Transmit the APRS packet
-            aprs_tx.transmit_audio(audio_data, SAMPLE_RATE)
+            aprs_tx.transmit_via_direwolf_kiss(packetAPRS)
 
         except Exception as e:
             print("ERROR:", e)
 	
-	# UNTESTED (START)
         try:
-            packetAPRS = "KE8ZXE-11::KE8ZXE-11:VFAN:123:BMP280:12,32" #dummy data
-            telem.log_data(data=packetAPRS)
+            pass
+            #telem.log_data(data=packetAPRS)
 
         except Exception as e:
             print("ERROR:", e)
-	# UNTESTED (END)
 
         try:
             # Capture and save image(s) using webcam
-            images_saved = webcam.capture_images(RESOLUTION, SKIPPED_FRAMES, CAPTURE_DELAY,
-                                                  CAPTURED_FRAMES, SAVE_DIRECTORY, WEBCAM_DEVICES)
+            pass
+            #images_saved = webcam.capture_images(RESOLUTION, SKIPPED_FRAMES, CAPTURE_DELAY,
+            #                                      CAPTURED_FRAMES, WEBCAM_DEVICES)
         except Exception as e:
             print("ERROR:", e)
             
