@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 # TODO:
 # Currently only using VOX to key transmitter
-# Configure Pi direwolf with a GPIO
-# Ground Baofeng UV-5R PTT line using GPIO + Transistor
 import socket
 import time
 import struct
