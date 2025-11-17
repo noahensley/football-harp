@@ -45,7 +45,8 @@ def create_aprs_packet(callsign, ssid, telemetry, message=""):
         
         if DEBUG_MODE:
             print(f"\n\tPacket: {packet}")
-        
+        else:
+            print("DONE")
         return packet
         
     except Exception as e:

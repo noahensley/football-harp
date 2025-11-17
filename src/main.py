@@ -13,13 +13,13 @@ import telem
 from debug import DEBUG_MODE
 
 # main.py
-LOOP_TIME_DELAY = 10  # Delay in seconds of main loop
+LOOP_TIME_DELAY = 20  # Delay in seconds of main loop
 
 # bmp280.py->wifi.py
 CUTOFF_ALTITUDE = 1524  # Altitude (in meters) where wifi is turned off
 
 # vfan.py
-GPS_DEVICE = "ttyS0"
+GPS_DEVICE = "ttyAMA0"
 GPS_MAX_ATTEMPTS = 2
 GPS_TIMEOUT = 2
 
@@ -62,7 +62,6 @@ if __name__ == "__main__":
         try:
             # Collect data from VFAN GPS
             gps_dict = vfan.read_gps(GPS_DEVICE, max_attempts=GPS_MAX_ATTEMPTS, timeout=GPS_TIMEOUT)
-            
             # Add VFAN GPS data to data_list
             data_list["VFAN"] = gps_dict
 

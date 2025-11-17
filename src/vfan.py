@@ -1,6 +1,7 @@
 import subprocess
 from gps import gps, WATCH_ENABLE
 import time
+from datetime import datetime
 
 from debug import DEBUG_MODE
 
@@ -50,7 +51,13 @@ def read_gps(gps_device, max_attempts=5, timeout=3):
                         else:
                             print("Retrying...")         
                     continue
-                
+
+                # Test for UBLOX
+                with open("/home/n8ssu/ublox_log.txt", "a") as fp:
+                    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                    line = f"[{timestamp}] {report}"
+                    fp.write(line + "\n")
+
                 if hasattr(report, 'class') and report['class'] == 'TPV':
                     # Check if report has the required attributes
                     if hasattr(report, 'lat') and hasattr(report, 'lon') and hasattr(report, 'alt'):

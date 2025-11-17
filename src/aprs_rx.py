@@ -12,7 +12,7 @@ from pathlib import Path
 # ============================================================================
 FILTER_BY_CALLSIGN = False  # Set to True to filter, False to see all packets
 TARGET_CALLSIGN = "KE8ZXE"  # Change to payload callsign (only used if FILTER_BY_CALLSIGN = True)
-COMMAND_LIST = ["N8SSU:CMD:CUTDOWN"] # Can be expanded
+COMMAND_LIST = ["N8SSU-CMD-CUTDOWN"] # Can be expanded
 # ============================================================================
 PARENT_DIR = Path(__file__).parent
 LED_SCRIPT_PATH = PARENT_DIR / "../utils/blink_led.py"
@@ -113,8 +113,10 @@ def parse_command(payload):
         return None
     
     payload_upper = payload.upper()
+    #print(f"Payload msg (upper): {payload_upper}")
     for cmd in COMMAND_LIST:
         if cmd in payload_upper:
+            #print(f"Recognized command: {cmd}")
             return cmd
     
     return None
@@ -216,10 +218,10 @@ def main():
                         
                         # Check for command
                         command = parse_command(packet["payload"])
-                        if command == "CUTDOWN":
+                        if command:
                             print(f"  >>> COMMAND DETECTED: {command} <<<")
                             subprocess.run(["sudo", "python3", str(LED_SCRIPT_ABS_PATH)])
-                            subprocess.run(["sudo", "python3", str(CUTDOWN_SCRIPT_ABS_PATH)]) #Not developed yet
+                            subprocess.run(["sudo", "python3", str(CUTDOWN_SCRIPT_ABS_PATH)]) #In development
                             pass
                         
                         print(f"  (Total packets decoded: {packets_seen})")
