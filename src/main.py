@@ -1,13 +1,11 @@
 import bmp280
-import vfan
+import ublox
 import time
 import webcam
 import aprs_tx
 import telem
 
-# Move these macros to config.py (currently debug.py)
-# Import macros
-# Import utils.log_telemetry_data (refactor)
+# Import/centralize macros, one configuration file (config.py)
 
 # debug.py
 from debug import DEBUG_MODE
@@ -61,7 +59,7 @@ if __name__ == "__main__":
 
         try:
             # Collect data from VFAN GPS
-            gps_dict = vfan.read_gps(GPS_DEVICE, max_attempts=GPS_MAX_ATTEMPTS, timeout=GPS_TIMEOUT)
+            gps_dict = ublox.main(max_no_fix_cycles=GPS_MAX_ATTEMPTS, timeout_seconds=GPS_TIMEOUT)
             # Add VFAN GPS data to data_list
             data_list["VFAN"] = gps_dict
 
