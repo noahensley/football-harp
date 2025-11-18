@@ -158,7 +158,7 @@ class UBLOX_I2C:
         return gps_data
 
 
-def main(timeout_seconds=300, max_no_fix_cycles=100):
+def main(timeout_seconds=20, max_no_fix_cycles=10):
     """
     Example usage
     
@@ -263,7 +263,3 @@ def main(timeout_seconds=300, max_no_fix_cycles=100):
         print("3. Install smbus: sudo apt-get install python3-smbus")
         print("4. Make sure EN pin is connected to 3.3V")
         return False
-
-if __name__ == "__main__":
-    success = main(timeout_seconds=300, max_no_fix_cycles=100)
-    exit(0 if success else 1)
