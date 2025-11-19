@@ -6,35 +6,16 @@ import aprs_tx
 import telem
 
 # Import/centralize macros, one configuration file (config.py)
+from config import DEBUG_MODE, LOGGING_MODE
 
-# debug.py
-from debug import DEBUG_MODE
+from config import LOOP_TIME_DELAY
 
-# main.py
-LOOP_TIME_DELAY = 20  # Delay in seconds of main loop
+from config import GPS_MAX_ATTEMPTS, GPS_TIMEOUT
 
-# bmp280.py->wifi.py
-CUTOFF_ALTITUDE = 1524  # Altitude (in meters) where wifi is turned off
+from config import RESOLUTION, SKIPPED_FRAMES, CAPTURE_DELAY, CAPTURED_FRAMES
+from config import WEBCAM_DEVICES
 
-# vfan.py
-GPS_DEVICE = "ttyAMA0"
-GPS_MAX_ATTEMPTS = 2
-GPS_TIMEOUT = 2
-
-# webcam.py
-RESOLUTION = "1920x1080"
-SKIPPED_FRAMES = 10
-CAPTURE_DELAY = 2
-CAPTURED_FRAMES = 2
-#SAVE_DIRECTORY = "../media/images"
-WEBCAM_DEVICES = ["video0", "video2", "video4"]  # Each USB hub webcam takes two video* devices
-                                                 # (i.e. Camera 1 => video0/video1)
-
-# aprs.py
-CALLSIGN = "KE8ZXE"
-SSID = "11"
-BAUD_RATE = 1200
-SAMPLE_RATE = 48000
+from config import CALLSIGN, SSID
 
 
 if __name__ == "__main__":
@@ -59,7 +40,7 @@ if __name__ == "__main__":
 
         try:
             # Collect data from VFAN GPS
-            gps_dict = ublox.main(max_no_fix_cycles=GPS_MAX_ATTEMPTS, timeout_seconds=GPS_TIMEOUT)
+            gps_dict = ublox.poll_gps(max_no_fix_cycles=GPS_MAX_ATTEMPTS, timeout_seconds=GPS_TIMEOUT)
             # Add VFAN GPS data to data_list
             data_list["VFAN"] = gps_dict
 
@@ -86,17 +67,16 @@ if __name__ == "__main__":
             print("ERROR:", e)
 	
         try:
-            pass
-            #telem.log_data(data=packetAPRS)
+            if LOGGING_MODE:
+                telem.log_data(data=packetAPRS)
 
         except Exception as e:
             print("ERROR:", e)
 
         try:
-            # Capture and save image(s) using webcam
-            pass
-            #images_saved = webcam.capture_images(RESOLUTION, SKIPPED_FRAMES, CAPTURE_DELAY,
-            #                                      CAPTURED_FRAMES, WEBCAM_DEVICES)
+            if LOGGING_MODE:
+                images_saved = webcam.capture_images(RESOLUTION, SKIPPED_FRAMES, CAPTURE_DELAY,
+                                                        CAPTURED_FRAMES, WEBCAM_DEVICES)
         except Exception as e:
             print("ERROR:", e)
             

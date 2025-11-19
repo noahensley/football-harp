@@ -1,15 +1,27 @@
-# Make this file a configuration file named 'config.py'
 # Incorporate with main script
-DEBUG_MODE = False  # Includes status print statements
 
-#=========================================+
-# The time delay between loops of main.py |
-#=========================================+
+#==================================+
+# Includes status print statements |
+#==================================+
+DEBUG_MODE = False
+
+#==================================+
+# Logs data/saves images           |
+#==================================+
+LOGGING_MODE = False
+
+#==============================================+
+# The time delay between loops of main service |
+#                                              |
+# [USED: main.py]                              |
+#==============================================+
 LOOP_TIME_DELAY = 10
 
 #=========================================================+
-# The altitude (m, from GPS) where Wi-Fi must be disabled |
-#     (according to FAA regulations) (not implemented)    |
+# The altitude (m, from BMP280) where Wi-Fi must be dis-  |
+#   abled according to FAA regulations)                   |
+#                                                         |
+# [USED: Not yet used]                                    |
 #=========================================================+
 CUTOFF_ALTITUDE = 1524
 
@@ -20,27 +32,75 @@ GPS_DEVICE = "ttyS0"
 
 #=====================================================+
 # The maximum number of times to retry a GPS read if  |
-#    unsuccessful                                     |
+#   unsuccessful                                      |
+#                                                     |
+# [USED: ublox.poll_gps]                              |
 #=====================================================+
 GPS_MAX_ATTEMPTS = 2
 
 #====================================================+
 # The maximum amount of time for a GPS read to occur |
-#    (the read is retried 'GPS_MAX_ATTEMPTS' times   |
-#        before giving up)                           |
+#   (the read is retried 'GPS_MAX_ATTEMPTS' times    |
+#       before giving up)                            |
+#                                                    |
+# [USED: ublox.poll_gps]                             |
 #====================================================+
 GPS_TIMEOUT = 2
 
-# Finish comment desc.
+#===========================================+
+# The resolution for fswebcam image capture |
+#                                           |
+# [USED: fsbwecam]                          |
+#===========================================+
 RESOLUTION = "1920x1080"
+
+#=============================================+
+# The number of frames to skip when capturing |
+#   an image (this reduces blurry images in-  |
+#   flight)                                   |
+#                                             |
+# [USED: fswebcam]                            |
+#=============================================+
 SKIPPED_FRAMES = 10
+
+#==============================================+
+# The delay between consecutive image captures |
+#                                              |
+# [USED: fswebcam]                             |
+#==============================================+
 CAPTURE_DELAY = 2
+
+#===============================================+
+# The "pre-amble" frames before the real image  |
+#   frame is captured (preamble needed to apply |
+#   certain capture settings)                   |
+#                                               |
+# [USED: fswebcam]                              |
+#===============================================+
 CAPTURED_FRAMES = 2
-# Should this be moved to webcam.py?
-SAVE_DIRECTORY = "../data/images"
+
+#===============================================+
+# A list of the USB hub webcam video devices    |
+#   (each webcam is assigned two video devices: |
+#       one for video stream data and one for   |
+#           metadata                            |
+#                                               |
+# [USED: webcam.py]                             |
+#===============================================+
 WEBCAM_DEVICES = ["video0", "video2", "video4"]
 
+#========================================+
+# The callsign for outgoing APRS packets | 
+#                                        |
+# [USED: aprs_tx.py]                     |
+#========================================+
 CALLSIGN = "KE8ZXE"
+
+#=========================================+
+# The SSID of the Pi APRS application     | 
+#   (-11: balloons, aircraft, spacecraft, |
+#       etc.)                             |
+#                                         |
+# [USED: aprs_tx.py]                      |
+#=========================================+
 SSID = "11"
-BAUD_RATE = 1200
-SAMPLE_RATE = 48000

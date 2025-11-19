@@ -3,7 +3,7 @@ import time
 import board
 import subprocess
 import adafruit_bmp280
-from main import CUTOFF_ALTITUDE
+from config import CUTOFF_ALTITUDE
 
 from debug import DEBUG_MODE
         
