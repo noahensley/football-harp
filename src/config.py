@@ -1,5 +1,3 @@
-# Incorporate with main script
-
 #==================================+
 # Includes status print statements |
 #==================================+
