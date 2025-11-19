@@ -86,7 +86,7 @@ def read_gps(gps_device, max_attempts=5, timeout=3):
             # GPS device was not found in the device list
             raise IOError(f"GPS device {gps_device} not found")
 
-    except Exception as e:
+    except Exception:
         raise
             
     finally:
