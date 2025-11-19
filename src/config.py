@@ -24,11 +24,6 @@ LOOP_TIME_DELAY = 10
 CUTOFF_ALTITUDE = 1524
 
 #=====================================================+
-# The serial port device being used by UBLOX GPS UART |
-#=====================================================+
-GPS_DEVICE = "ttyS0"
-
-#=====================================================+
 # The maximum number of times to retry a GPS read if  |
 #   unsuccessful                                      |
 #                                                     |
