@@ -6,14 +6,14 @@ DEBUG_MODE = False
 #==================================+
 # Logs data/saves images           |
 #==================================+
-LOGGING_MODE = False
+LOGGING_MODE = True
 
 #==============================================+
 # The time delay between loops of main service |
 #                                              |
 # [USED: main.py]                              |
 #==============================================+
-LOOP_TIME_DELAY = 10
+LOOP_TIME_DELAY = 60
 
 #=========================================================+
 # The altitude (m, from BMP280) where Wi-Fi must be dis-  |

@@ -26,14 +26,14 @@ def create_aprs_packet(callsign, ssid, telemetry, message=""):
     
     try:
         # Extract position from telemetry
-        lat = telemetry["VFAN"]["Latitude"]
-        lon = telemetry["VFAN"]["Longitude"]
+        lat = telemetry["UBLOX"]["latitude"]
+        lon = telemetry["UBLOX"]["longitude"]
         
         # Build telemetry string
         telemetry_list = []
         for sensor in telemetry.keys():
             for data in telemetry[sensor].keys():
-                if data not in ["Latitude", "Longitude"]:  # Skip position data
+                if data not in ["latitude", "longitude"]:  # Skip position data
                     telemetry_list.append(f"{data}={telemetry[sensor][data]}")
         
         telemetry_string = ", ".join(telemetry_list)

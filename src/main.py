@@ -21,9 +21,8 @@ from config import CALLSIGN, SSID
 if __name__ == "__main__":
 
     while True:
-        # Initializes data to an empty dict
-        # dummy data
-        data_list = {"VFAN": {"Latitude": 10.18, "Longitude": 789.2}}
+        # Initializes data list to empty dict
+        data_list = {}
 
         try:
             # Collect data from bmp280
@@ -39,10 +38,10 @@ if __name__ == "__main__":
             print("ERROR:", "Error reading from BMP280 device.")
 
         try:
-            # Collect data from VFAN GPS
+            # Collect data from UBLOX GPS
             gps_dict = ublox.poll_gps(max_no_fix_cycles=GPS_MAX_ATTEMPTS, timeout_seconds=GPS_TIMEOUT)
-            # Add VFAN GPS data to data_list
-            data_list["VFAN"] = gps_dict
+            # Add UBLOX GPS data to data_list
+            data_list["UBLOX"] = gps_dict
 
         except IOError as e:
             print("ERROR:", e)
@@ -56,6 +55,7 @@ if __name__ == "__main__":
                 for data in data_list[sensor].keys():
                     print(f"Data: {data}:{data_list[sensor][data]}")
 
+        packetAPRS = ""
         try:
             # Create an APRS packet from telemetry
             packetAPRS = aprs_tx.create_aprs_packet(CALLSIGN, SSID, data_list, message="TEST BEACON")
@@ -68,7 +68,7 @@ if __name__ == "__main__":
 	
         try:
             if LOGGING_MODE:
-                telem.log_data(data=packetAPRS)
+                telem.log_data(data=packetAPRS, file="../utils/power_log2.txt")
 
         except Exception as e:
             print("ERROR:", e)
