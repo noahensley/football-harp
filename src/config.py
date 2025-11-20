@@ -29,7 +29,7 @@ CUTOFF_ALTITUDE = 1524
 #                                                     |
 # [USED: ublox.poll_gps]                              |
 #=====================================================+
-GPS_MAX_ATTEMPTS = 2
+GPS_MAX_ATTEMPTS = 10
 
 #====================================================+
 # The maximum amount of time for a GPS read to occur |
@@ -38,7 +38,7 @@ GPS_MAX_ATTEMPTS = 2
 #                                                    |
 # [USED: ublox.poll_gps]                             |
 #====================================================+
-GPS_TIMEOUT = 2
+GPS_TIMEOUT = 20
 
 #===========================================+
 # The resolution for fswebcam image capture |
