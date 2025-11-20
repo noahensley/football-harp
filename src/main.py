@@ -68,7 +68,7 @@ if __name__ == "__main__":
 	
         try:
             if LOGGING_MODE:
-                telem.log_data(data=packetAPRS, file="../utils/power_log2.txt")
+                telem.log_data(data=packetAPRS)
 
         except Exception as e:
             print("ERROR:", e)
