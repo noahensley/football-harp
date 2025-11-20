@@ -100,6 +100,8 @@ def transmit_via_direwolf_kiss(packet, kiss_host='localhost', kiss_port=8001):
     """
     if DEBUG_MODE:
         print(f"[APRS_Tx] Connecting to direwolf KISS interface at {kiss_host}:{kiss_port}...", end="")
+    else:
+        print("[APRS_Tx] Connecting to direwolf...", end="")
     
     sock = None
     try:
@@ -108,8 +110,7 @@ def transmit_via_direwolf_kiss(packet, kiss_host='localhost', kiss_port=8001):
         sock.settimeout(5)
         sock.connect((kiss_host, kiss_port))
         
-        if DEBUG_MODE:
-            print("[APRS_Tx] DONE")
+        print("DONE")
         
         # Encode and send packet
         kiss_frame = encode_kiss_frame(packet)

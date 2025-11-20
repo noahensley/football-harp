@@ -249,7 +249,7 @@ def poll_gps(timeout_seconds=20, max_no_fix_cycles=10):
                 if has_fix:
                     got_first_fix = True
                     no_fix_count = 0
-                    print("DONE")
+                    print("DONE:",f"({len(data.values())} values)")
                     return data                 
                 else:
                     # No fix in this cycle
