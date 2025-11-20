@@ -8,7 +8,6 @@ import struct
 
 from debug import DEBUG_MODE
 
-
 def create_aprs_packet(callsign, ssid, telemetry, message=""):
     """
     Creates an APRS packet string for transmission.
@@ -41,7 +40,7 @@ def create_aprs_packet(callsign, ssid, telemetry, message=""):
         # Construct APRS packet in TNC2 format
         source = f"{callsign}-{ssid}"
         # Position report with timestamp and comment
-        packet = f"{source}>APRS,WIDE1-1:!{lat}/{lon}>{telemetry_string} {message}".strip()
+        packet = f"{source}>APRS,WIDE1-1:!{lat:0.2f}/{lon:0.2f}>{telemetry_string} {message}".strip()
         
         if DEBUG_MODE:
             print(f"\n\tPacket: {packet}")
