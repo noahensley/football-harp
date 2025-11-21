@@ -2,7 +2,7 @@ import RPi.GPIO as GPIO
 import time
 
 OUTPUT_PIN = 40
-TIME_HIGH = 1
+TIME_HIGH = 4
 
 def main():
     try:
