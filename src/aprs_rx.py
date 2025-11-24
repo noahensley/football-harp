@@ -70,6 +70,7 @@ def parse_ax25_packet(ax25_data, target_callsign=None):
         
         # Filter by destination if specified
         if target_callsign and dest != target_callsign:
+            print("This was not addressed to me.  Ignoring...")
             return None
         
         # Control and PID fields
@@ -104,10 +105,10 @@ def parse_command(payload):
         return None
     
     payload_upper = payload.upper()
-    #print(f"Payload msg (upper): {payload_upper}")
+    print(f"Payload msg (upper): {payload_upper}")
     for cmd in COMMAND_LIST:
         if cmd in payload_upper:
-            #print(f"Recognized command: {cmd}")
+            print(f"Recognized command: {cmd}")
             return cmd
     
     return None
