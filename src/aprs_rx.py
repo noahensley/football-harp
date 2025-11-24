@@ -10,7 +10,7 @@ LED_SCRIPT_ABS_PATH = LED_SCRIPT_PATH.resolve() # Not sure if necessary
 CUTDOWN_SCRIPT_ABS_PATH = CUTDOWN_SCRIPT_PATH.resolve() # Not sure if necessary
 
 from config import CALLSIGN, SSID, FILTER_BY_CALLSIGN, COMMAND_LIST
-TARGET_CALLSIGN = CALLSIGN + "-" + SSID
+TARGET_CALLSIGN = CALLSIGN
 
 
 def decode_ax25_address(data, offset):
@@ -70,8 +70,9 @@ def parse_ax25_packet(ax25_data, target_callsign=None):
                 break
         
         # Filter by destination if specified
+        print(f"FROM: {source}\tTO: {dest}")
         if target_callsign and dest != target_callsign:
-            print("This was not addressed to me.  Ignoring...")
+            print(f"Packet addressed to {dest}\tTarget: {target_callsign}. Ignoring...")
             return None
         
         # Control and PID fields
