@@ -10,8 +10,8 @@ from pathlib import Path
 # ============================================================================
 # CONFIGURATION - Edit these values
 # ============================================================================
-FILTER_BY_CALLSIGN = False  # Set to True to filter, False to see all packets
-TARGET_CALLSIGN = "KE8ZXE"  # Change to payload callsign (only used if FILTER_BY_CALLSIGN = True)
+FILTER_BY_CALLSIGN = True  # Set to True to filter, False to see all packets
+TARGET_CALLSIGN = "N8SSU"  # Change to payload callsign (only used if FILTER_BY_CALLSIGN = True)
 COMMAND_LIST = ["N8SSU-CMD-CUTDOWN"] # Can be expanded
 # ============================================================================
 PARENT_DIR = Path(__file__).parent

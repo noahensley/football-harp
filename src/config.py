@@ -87,7 +87,7 @@ WEBCAM_DEVICES = ["video0", "video2", "video4"]
 #                                        |
 # [USED: aprs_tx.py]                     |
 #========================================+
-CALLSIGN = "KE8ZXE"
+CALLSIGN = "N8SSU"
 
 #=========================================+
 # The SSID of the Pi APRS application     | 
