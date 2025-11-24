@@ -1,29 +1,80 @@
-### What is this repository for? ###
+# Football Harp Installation Guide
 
-* Football Project
-* 1.0.2
+## Prerequisites
 
-### How do I get set up? ###
+- Linux operating system
+- Git installed
+- Sudo privileges
 
-* Relies on the Python Standard Library
-* Raspberry Pi 0W
-* Dependencies:
-	* fswebcam
-	* gps
-	* adafruit-blinka
-		* adafruit-circuitpython-bmp280
-	* direwolf
-	* aprslib
-	* sounddevice
-		* portaudio19-dev	
-* How to run tests (still needed)
-* Use 'pip install'/'apt-get' **dependencies** prior to running.
+## Installation Steps
 
-### Contribution guidelines ###
+### 1. Clone Repository
 
-* Writing tests (still needed)
-* Code review (closed, needs tests)
+First, clone the football-harp repository to your local machine.
 
-### Who do I talk to? ###
+### 2. Install Dependencies
 
-* Repo owner or admin
+#### System Packages
+
+Install required system packages using apt-get:
+
+```bash
+sudo apt-get install -y python3 fswebcam python3-smbus cmake git gcc g++ make libasound2-dev libudev-dev
+```
+
+#### Python Packages
+
+Due to externally managed environment restrictions, choose one of the following options:
+
+**Option 1: Virtual Environment (Recommended)**
+
+```bash
+python3 -m venv ~/football-harp-env
+source ~/football-harp-env/bin/activate
+pip install adafruit-blinka adafruit-circuitpython-bmp280 aprslib
+```
+
+**Option 2: System-wide Installation (Not Recommended)**
+
+```bash
+pip install --break-system-packages adafruit-blinka adafruit-circuitpython-bmp280 aprslib
+```
+
+#### Direwolf Installation
+
+Build and install Direwolf from source:
+
+```bash
+cd ~
+git clone https://www.github.com/wb2osz/direwolf
+cd direwolf
+mkdir build && cd build
+cmake ..
+make -j4
+sudo make install
+```
+
+Verify the installation:
+
+```bash
+which direwolf  # Should output: /usr/local/bin/direwolf
+```
+
+Clean up the build directory:
+
+```bash
+cd ~
+rm -rf direwolf
+```
+
+### 3. Configure Services
+
+Service configuration scripts will be provided separately.
+
+## Notes
+
+- An automated installation script is planned for future releases
+- If using the virtual environment, remember to activate it before running the application:
+  ```bash
+  source ~/football-harp-env/bin/activate
+  ```
