@@ -9,7 +9,8 @@ CUTDOWN_SCRIPT_PATH = PARENT_DIR / "../utils/cutdown.py"
 LED_SCRIPT_ABS_PATH = LED_SCRIPT_PATH.resolve() # Not sure if necessary
 CUTDOWN_SCRIPT_ABS_PATH = CUTDOWN_SCRIPT_PATH.resolve() # Not sure if necessary
 
-from config import CALLSIGN, FILTER_BY_CALLSIGN, COMMAND_LIST
+from config import CALLSIGN, SSID, FILTER_BY_CALLSIGN, COMMAND_LIST
+TARGET_CALLSIGN = "-".join(CALLSIGN, SSID)
 
 
 def decode_ax25_address(data, offset):
@@ -195,7 +196,7 @@ def main():
                         packets_seen += 1
                     
                     # Parse with filter if enabled
-                    filter_callsign = CALLSIGN if FILTER_BY_CALLSIGN else None
+                    filter_callsign = TARGET_CALLSIGN if FILTER_BY_CALLSIGN else None
                     packet = parse_ax25_packet(ax25_data, target_callsign=filter_callsign)
                     
                     if packet:
