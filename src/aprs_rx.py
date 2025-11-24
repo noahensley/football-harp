@@ -39,6 +39,23 @@ def decode_ax25_address(data, offset):
     return full_callsign, offset + 7, is_last
 
 
+def parse_aprs_message(info):
+    """
+    Parse APRS message format to extract addressee.
+    APRS message format: ::CALLSIGN :message text
+    Returns addressee callsign or None
+    """
+    if not info or not info.startswith("::"):
+        return None
+    
+    # Extract the addressee (9 characters after ::, space-padded)
+    if len(info) < 11:  # :: + 9 char callsign
+        return None
+    
+    addressee = info[2:11].strip()  # Characters 2-10 (9 chars)
+    return addressee if addressee else None
+
+
 def parse_ax25_packet(ax25_data, target_callsign=None):
     """
     Parse AX.25 packet from KISS frame.
@@ -69,29 +86,32 @@ def parse_ax25_packet(ax25_data, target_callsign=None):
             else:
                 break
         
-        # Filter by destination if specified
-        print(f"FROM: {source}\tTO: {dest}")
-        if target_callsign and dest != target_callsign:
-            print(f"Packet addressed to {dest}\tTarget: {target_callsign}. Ignoring...")
-            return None
-        
         # Control and PID fields
         if offset + 2 > len(ax25_data):
-            # Some packets might not have these, just extract what we have
             info = ax25_data[offset:].decode("ascii", errors="ignore").strip()
         else:
-            control = ax25_data[offset] #Unused
-            pid = ax25_data[offset + 1] #Unused
+            control = ax25_data[offset]
+            pid = ax25_data[offset + 1]
             info_start = offset + 2
-            
-            # Extract information field
             info = ax25_data[info_start:].decode("ascii", errors="ignore").strip()
+        
+        # Check if this is an APRS message and filter by addressee
+        if target_callsign:
+            addressee = parse_aprs_message(info)
+            if addressee and addressee != target_callsign:
+                print(f"Message addressed to {addressee}, not {target_callsign}. Ignoring...")
+                return None
+            elif not addressee:
+                # Not an APRS message format, optionally filter by AX.25 destination
+                # For now, we'll pass through non-message packets
+                pass
         
         return {
             "destination": dest,
             "source": source,
             "path": path,
-            "payload": info
+            "payload": info,
+            "addressee": parse_aprs_message(info)  # Add this for convenience
         }
     
     except Exception as e:
