@@ -158,7 +158,7 @@ def main():
             # Connect to Direwolf's KISS TCP interface
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             sock.connect((DIREWOLF_HOST, DIREWOLF_PORT))
-            print(f"✓ Connected to Direwolf successfully!")
+            print(f"Connected to Direwolf successfully!")
             print("Listening for KISS frames...\n")
             
             buffer = bytearray()
@@ -226,6 +226,7 @@ def main():
                         print(f"[Packet #{packets_filtered}] Received at {time.strftime('%H:%M:%S')}")
                         print(f"  From: {packet['source']}")
                         print(f"  To: {packet['destination']}")
+                        print(f"  Addressed to: {packet['addressee']}")
                         if packet["path"]:
                             print(f"  Path: {' -> '.join(packet['path'])}")
                         print(f"  Payload: {packet['payload']}")
