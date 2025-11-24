@@ -10,7 +10,7 @@ LED_SCRIPT_ABS_PATH = LED_SCRIPT_PATH.resolve() # Not sure if necessary
 CUTDOWN_SCRIPT_ABS_PATH = CUTDOWN_SCRIPT_PATH.resolve() # Not sure if necessary
 
 from config import CALLSIGN, SSID, FILTER_BY_CALLSIGN, COMMAND_LIST
-TARGET_CALLSIGN = "-".join(CALLSIGN, SSID)
+TARGET_CALLSIGN = CALLSIGN + "-" + SSID
 
 
 def decode_ax25_address(data, offset):
