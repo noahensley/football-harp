@@ -1,24 +1,15 @@
-# TODO:
-# Move/integrate to /src
-# Alter Pi service to reflect new script location
-
 import socket
 import time
 import subprocess
 from pathlib import Path
 
-# ============================================================================
-# CONFIGURATION - Edit these values
-# ============================================================================
-FILTER_BY_CALLSIGN = True  # Set to True to filter, False to see all packets
-TARGET_CALLSIGN = "N8SSU"  # Change to payload callsign (only used if FILTER_BY_CALLSIGN = True)
-COMMAND_LIST = ["N8SSU-CMD-CUTDOWN"] # Can be expanded
-# ============================================================================
 PARENT_DIR = Path(__file__).parent
 LED_SCRIPT_PATH = PARENT_DIR / "../utils/blink_led.py"
 CUTDOWN_SCRIPT_PATH = PARENT_DIR / "../utils/cutdown.py"
 LED_SCRIPT_ABS_PATH = LED_SCRIPT_PATH.resolve() # Not sure if necessary
 CUTDOWN_SCRIPT_ABS_PATH = CUTDOWN_SCRIPT_PATH.resolve() # Not sure if necessary
+
+from config import CALLSIGN, FILTER_BY_CALLSIGN, COMMAND_LIST
 
 
 def decode_ax25_address(data, offset):
@@ -131,7 +122,7 @@ def main():
     print("=" * 50)
     print(f"Connecting to Direwolf KISS port at {DIREWOLF_HOST}:{DIREWOLF_PORT}")
     if FILTER_BY_CALLSIGN:
-        print(f"Filtering for packets addressed to: {TARGET_CALLSIGN}")
+        print(f"Filtering for packets addressed to: {CALLSIGN}")
     else:
         print("Showing ALL packets (no filtering)")
     print("=" * 50)
@@ -203,7 +194,7 @@ def main():
                         packets_seen += 1
                     
                     # Parse with filter if enabled
-                    filter_callsign = TARGET_CALLSIGN if FILTER_BY_CALLSIGN else None
+                    filter_callsign = CALLSIGN if FILTER_BY_CALLSIGN else None
                     packet = parse_ax25_packet(ax25_data, target_callsign=filter_callsign)
                     
                     if packet:
@@ -238,7 +229,7 @@ def main():
             print("Shutting down...")
             print(f"Total packets decoded: {packets_seen}")
             if FILTER_BY_CALLSIGN:
-                print(f"Packets for {TARGET_CALLSIGN}: {packets_filtered}")
+                print(f"Packets for {CALLSIGN}: {packets_filtered}")
             else:
                 print(f"Packets displayed: {packets_filtered}")
             print("="*50)

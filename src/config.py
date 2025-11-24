@@ -15,6 +15,38 @@ LOGGING_MODE = True
 #==============================================+
 LOOP_TIME_DELAY = 60
 
+#========================================+
+# The callsign for outgoing APRS packets | 
+#                                        |
+# [USED: aprs_rx.py, aprs_tx.py]         |
+#========================================+
+CALLSIGN = "N8SSU"
+
+#==========================================+
+# Tells the KISS client to filter incoming |
+#   packets by callsign (or not to)        | 
+#                                          |
+# [USED: aprs_rx.py]                       |
+#==========================================+
+FILTER_BY_CALLSIGN = True
+
+#===============================================+
+# A list of commands that the TNC can recognize |
+#   and process (currently only cutdown)        | 
+#                                               |
+# [USED: aprs_rx.py]                            |
+#===============================================+
+COMMAND_LIST = ["N8SSU-CMD-CUTDOWN"]
+
+#=========================================+
+# The SSID of the Pi APRS application     | 
+#   (-11: balloons, aircraft, spacecraft, |
+#       etc.)                             |
+#                                         |
+# [USED: aprs_tx.py]                      |
+#=========================================+
+SSID = "11"
+
 #=========================================================+
 # The altitude (m, from BMP280) where Wi-Fi must be dis-  |
 #   abled according to FAA regulations)                   |
@@ -81,19 +113,3 @@ CAPTURED_FRAMES = 2
 # [USED: webcam.py]                             |
 #===============================================+
 WEBCAM_DEVICES = ["video0", "video2", "video4"]
-
-#========================================+
-# The callsign for outgoing APRS packets | 
-#                                        |
-# [USED: aprs_tx.py]                     |
-#========================================+
-CALLSIGN = "N8SSU"
-
-#=========================================+
-# The SSID of the Pi APRS application     | 
-#   (-11: balloons, aircraft, spacecraft, |
-#       etc.)                             |
-#                                         |
-# [USED: aprs_tx.py]                      |
-#=========================================+
-SSID = "11"
