@@ -26,7 +26,7 @@ sudo apt-get install -y python3 fswebcam python3-smbus cmake git gcc g++ make li
 
 Due to externally managed environment restrictions, choose one of the following options:
 
-**Option 1: Virtual Environment (Recommended)**
+**Option 1: Virtual Environment (Untested)**
 
 ```bash
 python3 -m venv ~/football-harp-env
@@ -34,7 +34,7 @@ source ~/football-harp-env/bin/activate
 pip install adafruit-blinka adafruit-circuitpython-bmp280 aprslib
 ```
 
-**Option 2: System-wide Installation (Not Recommended)**
+**Option 2: System-wide Installation**
 
 ```bash
 pip install --break-system-packages adafruit-blinka adafruit-circuitpython-bmp280 aprslib
